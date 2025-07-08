@@ -125,7 +125,7 @@ function Split() {
           {/* Right Sidebar */}
           <div
             className='relative flex p-8 flex-col overflow-y-auto h-full border-l-[1px] border-[#E5E8EB]'
-            style={{ flexBasis: "440px" }}
+            style={{ flexBasis: "303px" }}
           >
             <div className='w-full flex flex-col gap-3 h-full'>
               {/* Extract Mode */}
@@ -155,7 +155,7 @@ function Split() {
                       <p className='font-bold text-4 text-gray-800'>
                         Extract pages
                       </p>
-                      <p className='text-3 text-gray-500'>
+                      <p className='text-[12px] text-gray-500'>
                         Separate pages as individual file
                       </p>
                     </div>
@@ -219,7 +219,7 @@ function Split() {
                       <p className='font-bold text-4 text-gray-800'>
                         Split pages
                       </p>
-                      <p className='text-3 text-gray-500'>
+                      <p className='text-[12px] text-gray-500'>
                         Separate specific page ranges
                       </p>
                     </div>
@@ -273,7 +273,7 @@ function Split() {
               onClick={handleSplit}
               className='mt-6 w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 shadow'
             >
-              Split PDF
+             {mode.slice(0,1).toUpperCase()+mode.slice(1)}
             </button>
           </div>
         </div>
