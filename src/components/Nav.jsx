@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Logo from "../assets/logo.svg";
+import Logo from "../assets/logo.svg"; // Assuming you have a logo image
 import { FaBars } from "react-icons/fa"; // Assuming you have a logo image
 import { NavLink, Link } from "react-router-dom";
 import * as HoverCard from "@radix-ui/react-hover-card";
