@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import "../index.css";
 import { tools as data } from "../utils/cardData";
-
+import draganddrop from "../assets/draganddrop.svg";
 const FileGetter = ({
   acceptedFileTypes = ".pdf",
   buttonText = "Select PDF file",
@@ -10,11 +10,11 @@ const FileGetter = ({
   onFileSelect,
   wrapperClass = "min-h-screen w-full bg-white flex justify-center px-4 md:px-20",
   cardClass = "w-full max-w-5xl bg-white flex flex-col items-center",
-  titleClass = "text-2xl font-bold text-gray-800",
-  subtitleClass = "text-sm text-gray-500 mt-1 text-center",
+  titleClass = "text-[20px] md:text-[32px] font-bold text-gray-800",
+  subtitleClass = "text-[12px] w-[80%] md:text-[14px] text-gray-500 mt-1 text-start",
   dropZoneClass = "border-2 border-dashed border-gray-300 w-full rounded-md mt-6 p-10 text-center transition-all duration-200",
   dropZoneActiveClass = "border-blue-500 bg-blue-50",
-  iconClass = "text-gray-500 text-4xl mb-2",
+  iconClass = "w-8 h-8 mx-auto",
   selectButtonClass = "bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4",
   children,
 }) => {
@@ -76,7 +76,7 @@ const FileGetter = ({
           <div className={cardClass}>
             {/* Header */}
             <div
-              className='relative w-full max-w-2xl overflow-hidden pt-6 pb-6 px-6 md:px-10 rounded-[8px] mt-[80px] mb-6 text-center'
+              className='relative w-full max-w-2xl overflow-hidden p-3  md:px-10 rounded-[8px] h-auto md:h-[105px] mt-[80px] mb-6 text-start'
               style={{ backgroundColor: extractedColor }}
             >
               <h1 className={titleClass}>{title}</h1>
@@ -97,8 +97,11 @@ const FileGetter = ({
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
             >
-              <div className={iconClass}>📄</div>
+              <img src={draganddrop} className={iconClass} alt="" />
               <p className='text-gray-500'>Drag & drop files here</p>
+               <button className={selectButtonClass} onClick={handleFileClick}>
+              {buttonText}
+            </button>
             </div>
 
             {/* Always visible select button */}
@@ -110,9 +113,10 @@ const FileGetter = ({
               onChange={handleFileChange}
               className='hidden'
             />
-            <button className={selectButtonClass} onClick={handleFileClick}>
+            <button className={`${selectButtonClass} md:hidden`} onClick={handleFileClick}>
               {buttonText}
             </button>
+           
           </div>
         </div>
       )}

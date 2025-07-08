@@ -13,50 +13,58 @@ import exceltopdfSvg from '../assets/exceltopdf.svg';
 const allTools = {
   "All Tools": [
     {
+      id: 1,
       img: <img src={mergeSvg} alt="Merge PDF" className="nav-icon" width={24} height={24} />,
       label: "Merge PDF",
       to: "/merge-pdf",
     },
     {
+      id: 2,
       img: <img src={splitSvg} alt="Split PDF" className="nav-icon" width={24} height={24} />,
       label: "Split PDF",
       to: "/split-pdf",
     },
     {
+      id: 3,
       img: <img src={compressSvg} alt="Remove Pages" className="nav-icon" width={24} height={24} />,
       label: "Compress PDF",
       to: "/compress-pdf",
     },
     {
+      id: 4,
       img: <img src={pdftowordSvg} alt="Extract Pages" className="nav-icon" width={24} height={24} />,
       label: "Pdf to Word",
       to: "/pdf-to-word",
     },
     {
+      id: 5,
       img: <img src={pdftoexcelSvg} alt="Organize PDF" className="nav-icon" width={24} height={24} />,
       label: "Pdf to Excel",
       to: "/pdf-to-excel",
     },
- 
     {
+      id: 6,
       img: <img src={pdftopowerpointSvg } alt="Scan to PDF" className="nav-icon" width={24} height={24} />,
       label: "PDF to Powerpoint",
-      to: "/scan-to-pdf",
+      to: "/pdf-to-powerpoint",
     },
     {
+      id: 7,
       img: <img src={wordtopdfSvg } alt="Scan to PDF" className="nav-icon" width={24} height={24} />,
       label: "Word to PDF",
-      to: "/scan-to-pdf",
+      to: "/word-to-pdf",
     },
     {
+      id: 8,
       img: <img src={powerpointtopdfSvg } alt="Scan to PDF" className="nav-icon" width={24} height={24} />,
       label: "Powerpoint to PDF",
-      to: "/scan-to-pdf",
+      to: "/powerpoint-to-pdf",
     },
     {
+      id: 9,
       img: <img src={exceltopdfSvg} alt="Scan to PDF" className="nav-icon" width={24} height={24} />,
       label: "Excel to PDF",
-      to: "/scan-to-pdf",
+      to: "/excel-to-pdf",
     },
   ],
   // You can continue other sections like CONVERT PDF, etc. using:
