@@ -7,7 +7,7 @@ import PdfPreviewCanvas from "../../components/PdfPreviewCanvas";
 
 function Split() {
   const [files, setFiles] = useState([]);
-  const [mode, setMode] = useState("");
+  const [mode, setMode] = useState("split");
   const [pageInput, setPageInput] = useState("");
   const [splitRanges, setSplitRanges] = useState([{ from: "", to: "" }]);
 
