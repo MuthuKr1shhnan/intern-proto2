@@ -273,7 +273,7 @@ function Split() {
               onClick={handleSplit}
               className='mt-6 w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 shadow'
             >
-             {mode.slice(0,1).toUpperCase()+mode.slice(1)}
+             {mode.slice(0,1).toUpperCase()+mode.slice(1)+" "+"PDF"}
             </button>
           </div>
         </div>
