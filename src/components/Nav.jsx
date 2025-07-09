@@ -3,7 +3,7 @@ import logoSvg from "../assets/logo.svg"// Assuming you have a logo image
 import { FaBars } from "react-icons/fa"; // Assuming you have a logo image
 import { NavLink, Link } from "react-router-dom";
 import * as HoverCard from "@radix-ui/react-hover-card";
-import BurgerMenu from "./BugerMenu"; // updated version you’ll edit next
+import BurgerMenu from "./BurgerMenu"; // fixed typo from BugerMenu to BurgerMenu
 import allTools from "../utils/NavData"; // extracted object for reusability
 
 const DropdownSection = ({ title, tools }) => (
