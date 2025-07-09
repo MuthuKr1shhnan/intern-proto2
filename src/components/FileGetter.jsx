@@ -71,6 +71,29 @@ const FileGetter = ({
     setIsDragging(false);
   };
 
+  // Convert HEX to RGB
+const hexToRgb = (hex) => {
+  hex = hex.replace("#", "");
+  if (hex.length === 3) {
+    hex = hex.split("").map((c) => c + c).join("");
+  }
+  const bigint = parseInt(hex, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return { r, g, b };
+};
+
+// YIQ contrast calculator
+const getContrastTextColor = (hex) => {
+  const { r, g, b } = hexToRgb(hex);
+  const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+  return yiq >= 128 ? "#4B5563" : "#D1D5DB"; // softer black or white
+};
+
+const subtitleColor = getContrastTextColor(extractedColor);
+
+
   return (
     <>
       {files.length > 0 ? (
@@ -84,7 +107,7 @@ const FileGetter = ({
               style={{ backgroundColor: extractedColor }}
             >
               <h1 className={titleClass}>{title}</h1>
-              <p className={subtitleClass}>{subtitle}</p>
+              <p className={subtitleClass} style={{ color: subtitleColor }}>{subtitle}</p>
               {image && (
                 <img
                   src={image}
