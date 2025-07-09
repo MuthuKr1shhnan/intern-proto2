@@ -90,7 +90,7 @@ function Split() {
           style={{ height: "calc(100vh - 60px)" }}
         >
           {/* Left Section */}
-          <div className='relative h-full flex-1 tool px-6 md:px-28 bg-[#f5f5fa] overflow-y-auto text-center'>
+          <div className='relative h-full flex-1 tool px-6 md:px-28 bg-[#f8f8f8] overflow-y-auto text-center'>
             {/* Header */}
             <div
               className='sticky top-0 z-10 w-full md:w-[72%] mx-auto overflow-hidden p-[12px] pb-6 md:pl-8  rounded-[4px] h-[88px] md:h-[105px] mt-[80px] mb-6 text-start'
@@ -108,7 +108,7 @@ function Split() {
             </div>
 
             {/* Page Previews */}
-            <div className='flex  justify-around gap-y-2 pt-2 pl-5 pr-5 md:pl-0 md:pr-0 flex-wrap'>
+            <div className='flex  justify-around gap-y-10 pt-2 pl-5 gap-12  pr-5 md:pl-8 md:pr-8 flex-wrap'>
               {Array.from({ length: totalPages }).map((_, i) => (
                 <div
                   key={i}

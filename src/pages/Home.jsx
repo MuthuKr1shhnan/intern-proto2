@@ -24,7 +24,7 @@ function Home() {
   };
 
   return (
-    <section className='py-14 bg-white'>
+    <section className='py-14 bg-[#f8f8f8]'>
       <div className='max-w-7xl mt-6 mx-auto px-4 sm:px-6 lg:px-10'>
         {/* ✅ Banner */}
         <div className='w-full max-w-5xl mx-auto mb-10 bg-blue-100 rounded-[4px] opacity-90 overflow-hidden shadow-sm flex flex-col md:flex-row items-center md:items-stretch justify-between'>

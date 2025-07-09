@@ -8,8 +8,8 @@ const FileGetter = ({
   buttonText = "Select PDF file",
   multipleFiles = true,
   onFileSelect,
-  wrapperClass = "min-h-screen w-full bg-white flex justify-center px-4 md:px-20",
-  cardClass = "w-full max-w-5xl bg-white flex flex-col items-center",
+  wrapperClass = " w-full bg-[#f8f8f8] flex justify-center px-4 md:px-20",
+  cardClass = "w-full max-w-5xl  flex flex-col items-center",
   titleClass = "text-[20px] md:text-[32px] font-bold text-gray-800",
   subtitleClass = "text-[12px] w-[80%] md:text-[14px] text-gray-500 mt-1 text-start",
   dropZoneClass = "border-2 border-dashed border-gray-300 w-full rounded-md mt-6 p-10 text-center transition-all duration-200",
@@ -24,7 +24,9 @@ const FileGetter = ({
 
   const location = useLocation();
   const currentPath = location.pathname.replace("/", "");
-  const matchedTool = data.find((tool) => tool.link.replace("/", "") === currentPath);
+  const matchedTool = data.find(
+    (tool) => tool.link.replace("/", "") === currentPath
+  );
 
   const title = matchedTool?.title || "Tool";
   const subtitle = matchedTool?.description || "Upload and process your files";
@@ -38,7 +40,9 @@ const FileGetter = ({
 
   const addFiles = (newFiles) => {
     const selectedFiles = Array.from(newFiles);
-    const updatedFiles = multipleFiles ? [...files, ...selectedFiles] : selectedFiles;
+    const updatedFiles = multipleFiles
+      ? [...files, ...selectedFiles]
+      : selectedFiles;
     if (onFileSelect) onFileSelect(updatedFiles);
     setFiles(updatedFiles);
   };
@@ -72,7 +76,7 @@ const FileGetter = ({
       {files.length > 0 ? (
         <div className='w-full'>{children}</div>
       ) : (
-        <div className={wrapperClass}>
+        <div className={wrapperClass} style={{ height: "calc(100vh - 60px)" }}>
           <div className={cardClass}>
             {/* Header */}
             <div
@@ -92,16 +96,18 @@ const FileGetter = ({
 
             {/* Drag & Drop (Desktop only) */}
             <div
-              className={`${dropZoneClass} ${isDragging ? dropZoneActiveClass : ""} hidden md:block`}
+              className={`${dropZoneClass} ${
+                isDragging ? dropZoneActiveClass : ""
+              } hidden md:block`}
               onDrop={handleDrop}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
             >
-              <img src={draganddrop} className={iconClass} alt="" />
+              <img src={draganddrop} className={iconClass} alt='' />
               <p className='text-gray-500'>Drag & drop files here</p>
-               <button className={selectButtonClass} onClick={handleFileClick}>
-              {buttonText}
-            </button>
+              <button className={selectButtonClass} onClick={handleFileClick}>
+                {buttonText}
+              </button>
             </div>
 
             {/* Always visible select button */}
@@ -113,10 +119,12 @@ const FileGetter = ({
               onChange={handleFileChange}
               className='hidden'
             />
-            <button className={`${selectButtonClass} md:hidden`} onClick={handleFileClick}>
+            <button
+              className={`${selectButtonClass} md:hidden`}
+              onClick={handleFileClick}
+            >
               {buttonText}
             </button>
-           
           </div>
         </div>
       )}
