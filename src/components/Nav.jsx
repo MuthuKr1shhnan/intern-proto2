@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import logoSvg from "../assets/logo.svg"// Assuming you have a logo image
 import { FaBars } from "react-icons/fa"; // Assuming you have a logo image
 import { NavLink, Link } from "react-router-dom";
