@@ -42,7 +42,7 @@ export const tools = [
     description: "Transform PDF file into editable word document",
     icon: pdftowordSvg,
     cornerImage: pdftowordSvg,
-    link: "/pdftoword-pdf",
+    link: "/pdf-to-word",
     color: "bg-[#C968E1]",
   },
   {
@@ -51,7 +51,7 @@ export const tools = [
     description: "Transform PDF file into editable excel file",
     icon: pdftoexcelSvg,
     cornerImage: pdftoexcelSvg,
-    link: "/pdftoexcel-pdf",
+    link: "/pdf-to-excel",
     color: "bg-[#FEBCAF]",
   },
   {
@@ -60,7 +60,7 @@ export const tools = [
     description: "Transform PDF file into editable PPT file",
     icon: pdftopowerpointSvg,
     cornerImage: pdftopowerpointSvg,
-    link: "/pdftopowerpoint-pdf",
+    link: "/pdf-to-powerpoint",
     color: "bg-[#C2F496]",
   },
   {
@@ -69,7 +69,7 @@ export const tools = [
     description: "Transform word document to PDF file",
     icon: wordtopdfSvg,
     cornerImage: wordtopdfSvg,
-    link: "/wordtopdf-pdf",
+    link: "/word-to-pdf",
     color: "bg-[#8AD3D8]",
   },
   {
@@ -78,7 +78,7 @@ export const tools = [
     description: "Transform PPT file to PDF file",
     icon: powerpointtopdfSvg,
     cornerImage: powerpointtopdfSvg,
-    link: "/PowerPointtopdf-pdf",
+    link: "/powerpoint-to-pdf",
     color: "bg-[#D6E7FF]",
   },
   {
@@ -87,7 +87,7 @@ export const tools = [
     description: "Transform excel document to PDF",
     icon: exceltopdfSvg,
     cornerImage: exceltopdfSvg,
-    link: "/Exceltopdf-pdf",
+    link: "/excel-to-pdf",
     color: "bg-[#F6F17F]",
   },
   {
