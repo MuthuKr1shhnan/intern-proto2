@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import logo from "../assets/logo.svg"; // Assuming you have a logo image
+import logoSvg from "../assets/logo.svg"// Assuming you have a logo image
 import { FaBars } from "react-icons/fa"; // Assuming you have a logo image
 import { NavLink, Link } from "react-router-dom";
 import * as HoverCard from "@radix-ui/react-hover-card";
@@ -38,7 +38,7 @@ const Nav = () => {
     <div className='sticky top-0 z-50 w-full border-b border-gray-200 bg-white'>
       <div className='w-full max-w-[1280px] mx-auto px-5 py-4 flex items-center relative'>
         <Link to='/'>
-          <img src={logo} alt='' />
+          <img src={logoSvg} alt='' />
         </Link>
 
         <div className='hidden md:flex absolute left-1/2 -translate-x-1/2 gap-[32px] text-[14px] font-medium text-black items-center'>
