@@ -226,7 +226,7 @@ function Merge() {
 
           {/* Right Sidebar */}
           <div
-            className={`fixed top-0 right-0 h-full bg-white z-50 md:static md:translate-x-0 transition-transform duration-300
+            className={`fixed top-0 right-0 h-full bg-white z-10 md:static md:translate-x-0 transition-transform duration-300
               border-l border-[#E5E8EB]
               ${isSidebarOpen ? "translate-x-0" : "translate-x-full"}
             `}

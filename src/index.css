@@ -11,13 +11,12 @@ body {
 }
 
 .tool::-webkit-scrollbar {
-  width: 4px;
-  background-color: #8f9092;
+  width: 8px;
+  background-color: #f1f1f1; /* Light neutral background */
 }
 
 .tool::-webkit-scrollbar-thumb {
-  background-color: #616367;
-
-  border: 1px solid #55575b;
+  background-color: #a0a0a0; /* Medium gray for thumb */
+  border: 1px solid #888888; /* Slight contrast for border */
   border-radius: 8px;
 }
