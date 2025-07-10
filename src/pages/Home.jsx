@@ -41,7 +41,7 @@ function Home() {
       <div className='max-w-7xl mt-6 mx-auto px-4 sm:px-6 lg:px-10'>
         {/* ✅ Banner */}
         <div
-          className={`w-full lg:max-w-[798px] relative lg:h-[130px] mx-auto mb-10 bg-[#E9F1FE] rounded-[4px] opacity-90 overflow-hidden shadow-sm flex flex-col md:flex-row items-center md:items-stretch justify-between`}
+          className={`w-full hidden md:flex lg:max-w-[798px] relative lg:h-[130px] mx-auto mb-10 bg-[#E9F1FE] rounded-[4px] opacity-90 overflow-hidden shadow-sm flex-col md:flex-row items-center md:items-stretch justify-between`}
         >
           <img
             src={bannerpattern}
@@ -60,7 +60,7 @@ function Home() {
           </div>
 
           {/* ✅ Right Side Animated Image + Label */}
-          <div className='relative w-full md:w-auto'>
+          <div className='relative w-full  md:w-auto'>
             <CardSwap
               cardDistance={10}
               verticalDistance={8}
@@ -100,7 +100,7 @@ function Home() {
                 >
                   {/* Vertical Label */}
                   <div className='h-full flex items-center'>
-                    <span className=' mb-3 rotate-[-90deg] text-[24px]  font-extrabold text-black'>
+                    <span className=' mb-3 ml-3 rotate-[-90deg] text-[24px]  font-extrabold text-black'>
                       Split
                     </span>
                   </div>
