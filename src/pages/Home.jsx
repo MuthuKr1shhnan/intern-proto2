@@ -35,8 +35,8 @@ function Home() {
 
   return (
     <section
-      className='py-14 bg-[#f8f8f8]'
-      style={{ height: "calc(100vh - 60px)" }}
+      className='py-14 bg-[#f8f8f8] h-full'
+    
     >
       <div className='max-w-7xl mt-6 mx-auto px-4 sm:px-6 lg:px-10'>
         {/* ✅ Banner */}
@@ -191,7 +191,7 @@ function Home() {
         </div>
 
         {/* ✅ Tools Grid */}
-        <div className='px-2 sm:px-0'>
+        <div className='px-2 sm:px-0 '>
           <ToolsCard
             tools={getToolsForTab()}
             onToggleFavorite={handleToggleFavorite}
@@ -200,7 +200,7 @@ function Home() {
 
         {/* ✅ Empty State for Favorites */}
         {activeTab === "Favorites" && getToolsForTab().length === 0 && (
-          <div className='text-center text-sm text-gray-500 mt-8'>
+          <div className='text-center text-sm  text-gray-500 mt-8'>
             No favorite tools found.
           </div>
         )}
