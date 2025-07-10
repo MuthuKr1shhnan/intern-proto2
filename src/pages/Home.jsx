@@ -1,6 +1,16 @@
 import { useState } from "react";
 import ToolsCard from "../components/ToolsCard";
 import { tools } from "../utils/cardData";
+import bannerpattern from "../assets/bannerpattern.svg";
+import mergebannerimg from "../assets/mergebannerimg.svg";
+import pdftobannerimg from "../assets/pdftobannerimg.svg";
+import compressbannerimg from "../assets/compressbannerimg.svg";
+import splitbannerimg from "../assets/splitbannerimg.svg";
+import merge from "../assets/merge.svg";
+import split from "../assets/split.svg"; // Replace with your actual icon path
+import compress from "../assets/compress.svg"; // Replace with your actual icon path
+import pdftoword from "../assets/pdftoword.svg"; // Replace with your actual icon path
+import CardSwap, { Card } from "../components/CardSwap";
 
 function Home() {
   const [activeTab, setActiveTab] = useState("All");
@@ -24,28 +34,137 @@ function Home() {
   };
 
   return (
-    <section className='py-14 bg-[#f8f8f8]'>
+    <section
+      className='py-14 bg-[#f8f8f8]'
+      style={{ height: "calc(100vh - 60px)" }}
+    >
       <div className='max-w-7xl mt-6 mx-auto px-4 sm:px-6 lg:px-10'>
         {/* ✅ Banner */}
-        <div className='w-full max-w-5xl mx-auto mb-10 bg-blue-100 rounded-[4px] opacity-90 overflow-hidden shadow-sm flex flex-col md:flex-row items-center md:items-stretch justify-between'>
+        <div
+          className={`w-full lg:max-w-[798px] relative lg:h-[130px] mx-auto mb-10 bg-[#E9F1FE] rounded-[4px] opacity-90 overflow-hidden shadow-sm flex flex-col md:flex-row items-center md:items-stretch justify-between`}
+        >
+          <img
+            src={bannerpattern}
+            className='absolute -z-1 opacity-8 bottom-0'
+            alt='bannerpattern'
+          />
+
           {/* Left Side Text */}
-          <div className='p-4 w-full md:w-2/3'>
-            <h3 className='text-base sm:text-lg font-extrabold text-[#2869DA] mb-1'>
+          <div className='w-full flex flex-col justify-center lg:pl-[24px] md:w-2/3'>
+            <h3 className='text-base sm:text-lg lg:text-[32px] font-extrabold text-[#2869DA]'>
               Your All-in-one PDF Utility
             </h3>
-            <p className='text-xs sm:text-sm text-blue-800'>
+            <p className='text-xs sm:text-sm lg:text-[16px] text-[#6B7582]'>
               Merge, split, convert & more for free with PDF Tools.
             </p>
           </div>
 
-          {/* Right Side Image + Label */}
-          <div className='flex items-center gap-2 bg-black text-white text-[10px] font-bold uppercase py-2 px-4 md:py-1 md:px-3 md:rounded-l-[4px] w-full md:w-auto justify-center'>
-            <img
-              src='mergeicon.png'
-              alt='Merge Icon'
-              className='w-10 h-10 sm:w-5 sm:h-5 object-contain'
-            />
-            <span className='text-xs sm:text-sm'>Merge</span>
+          {/* ✅ Right Side Animated Image + Label */}
+          <div className='relative w-full md:w-auto'>
+            <CardSwap
+              cardDistance={10}
+              verticalDistance={8}
+              delay={3000}
+              pauseOnHover={true}
+              width={200}
+              height={130}
+            >
+              <Card customClass='w-[150px] h-[150px] rounded-md'>
+                <div
+                  className='w-full h-full rounded-[8px] relative  shadow-md flex items-center justify-center'
+                  style={{
+                    backgroundImage: `url(${mergebannerimg})`,
+                  }}
+                >
+                  {/* Vertical Label */}
+                  <div className='h-full flex items-center'>
+                    <span className=' mb-3 rotate-[-90deg] text-[24px] font-extrabold text-black'>
+                      Merge
+                    </span>
+                  </div>
+
+                  {/* Icon */}
+                  <img
+                    src={merge} // Replace with your actual icon path
+                    alt='Split Icon'
+                    className='w-[150px] mr-2 mt-1 h-[150px] mb-4'
+                  />
+                </div>
+              </Card>
+              <Card customClass='w-[150px] h-[150px] rounded-md'>
+                <div
+                  className='w-full h-full rounded-[8px] relative  shadow-md flex items-center justify-center'
+                  style={{
+                    backgroundImage: `url(${splitbannerimg})`,
+                  }}
+                >
+                  {/* Vertical Label */}
+                  <div className='h-full flex items-center'>
+                    <span className=' mb-3 rotate-[-90deg] text-[24px]  font-extrabold text-black'>
+                      Split
+                    </span>
+                  </div>
+
+                  {/* Icon */}
+                  <img
+                    src={split} // Replace with your actual icon path
+                    alt='Split Icon'
+                    className='w-[150px] mr-3 mt-1 h-[150px] mb-4'
+                  />
+                </div>
+              </Card>
+              <Card customClass='w-[150px] h-[150px] rounded-md'>
+                <div
+                  className='w-full h-full rounded-[8px] relative  shadow-md flex items-center justify-center'
+                  style={{
+                    backgroundImage: `url(${compressbannerimg})`,
+                  }}
+                >
+                  {/* Vertical Label */}
+                  <div className='h-full flex justify-center items-center'>
+                    <span className=' mb-3 rotate-[-90deg] text-[16px]  font-extrabold text-black'>
+                      Compress{" "}
+                      <span className=' mb-3 rotate-[-90deg] text-[16px]  font-extrabold text-black'>
+                        PDF
+                      </span>
+                    </span>
+                  </div>
+
+                  {/* Icon */}
+                  <img
+                    src={compress} // Replace with your actual icon path
+                    alt='Split Icon'
+                    className='w-[120px] mr-2 mt-1 h-[120px] mb-4'
+                  />
+                </div>
+              </Card>
+              <Card customClass='w-[150px] h-[150px] rounded-md'>
+                <div
+                  className='w-full h-full rounded-[8px] relative  shadow-md flex items-center justify-center'
+                  style={{
+                    backgroundImage: `url(${pdftobannerimg})`,
+                  }}
+                >
+                  {/* Vertical Label */}
+                  <div className='h-full flex items-center'>
+                    <span className=' mb-3 rotate-[-90deg] text-[16px]  font-extrabold text-black'>
+                      PDF to
+                      <span className=' mb-3 rotate-[-90deg] text-[16px]  font-extrabold text-black'>
+                        {" "}
+                      </span>
+                      Anything
+                    </span>
+                  </div>
+
+                  {/* Icon */}
+                  <img
+                    src={pdftoword} // Replace with your actual icon path
+                    alt='Split Icon'
+                    className='w-[100px] mr-3 mt-1 h-[100px] mb-4'
+                  />
+                </div>
+              </Card>
+            </CardSwap>
           </div>
         </div>
 
@@ -55,14 +174,14 @@ function Home() {
         </h2>
 
         {/* ✅ Tabs */}
-        <div className='flex justify-center space-x-8 mb-10'>
+        <div className='flex justify-center space-x-12 mb-10'>
           {["All", "Favorites"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`text-lg font-semibold transition-colors ${
                 activeTab === tab
-                  ? "text-black border-b-2 border-pink-500"
+                  ? "text-black border-b-2 border-blue-500"
                   : "text-gray-500 hover:text-black"
               }`}
             >
@@ -91,77 +210,3 @@ function Home() {
 }
 
 export default Home;
-
-// import ToolsCard from "../components/ToolsCard";
-// import { tools } from "../utils/cardData";
-// import { useState } from "react";
-
-// function Home() {
-//   const [activeTab, setActiveTab] = useState("All");
-//   const [favorites, setFavorites] = useState([]);
-
-//   const handleToggleFavorite = (id) => {
-//     setFavorites((prev) =>
-//       prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id]
-//     );
-//   };
-
-//   const getToolsForTab = () => {
-//     const toolsWithFavFlag = tools.map((tool) => ({
-//       ...tool,
-//       isFavorite: favorites.includes(tool.id),
-//     }));
-
-//     if (activeTab === "Favorites") {
-//       return toolsWithFavFlag.filter((tool) => favorites.includes(tool.id));
-//     }
-
-//     return toolsWithFavFlag;
-//   };
-
-//   return (
-//     <section className='py-12 bg-white'>
-//       <div className='max-w-7xl mx-auto px-4'>
-//         <h2 className='text-4xl font-bold text-center mb-6'>Popular Tools</h2>
-
-//         {/* Tabs */}
-//         <div className='flex justify-center space-x-6 mb-10'>
-//           {["All", "Favorites"].map((tab) => (
-//             <button
-//               key={tab}
-//               onClick={() => setActiveTab(tab)}
-//               className={`text-lg font-semibold ${
-//                 activeTab === tab
-//                   ? "text-black border-b-2 border-pink-500"
-//                   : "text-gray-500 hover:text-black"
-//               }`}
-//             >
-//               {tab}
-//             </button>
-//           ))}
-//         </div>
-
-//         {/* Tools Card */}
-//         <ToolsCard
-//           tools={getToolsForTab()}
-//           onToggleFavorite={handleToggleFavorite} // 👈 this line!
-//           containerClasses='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'
-//           mainContainerClasses=''
-//           itemClasses='bg-pink-100 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow text-center relative'
-//           iconClasses='mx-auto mb-3 w-9 h-9 text-pink-700'
-//           titleClasses='text-base font-bold mb-1 text-gray-800'
-//           contentClasses='text-sm text-gray-600'
-//           badgeClasses='absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-0.5 rounded'
-//         />
-
-//         {activeTab === "Favorites" && getToolsForTab().length === 0 && (
-//           <div className='text-center text-sm text-gray-500 mt-4'>
-//             No favorite tools found.
-//           </div>
-//         )}
-//       </div>
-//     </section>
-//   );
-// }
-
-// export default Home;

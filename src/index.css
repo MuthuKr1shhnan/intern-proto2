@@ -1,4 +1,14 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Luckiest+Guy&display=swap');
+
+body {
+
+  font-family: "Inter Tight", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: <weight>;
+  font-style: normal;
+
+}
 
 .tool::-webkit-scrollbar {
   width: 4px;
@@ -7,8 +17,7 @@
 
 .tool::-webkit-scrollbar-thumb {
   background-color: #616367;
-  
+
   border: 1px solid #55575b;
   border-radius: 8px;
 }
-

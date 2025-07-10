@@ -72,7 +72,7 @@ const DropdownSection = ({ title, tools, onItemClick }) => {
 
 const Nav = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [openPopover, setOpenPopover] = useState(null); // null | "allTools" | "convert"
+  const [openPopover, setOpenPopover] = useState(null); 
 
   return (
     <div className='sticky top-0 z-50 w-full border-b border-gray-200 bg-white'>
