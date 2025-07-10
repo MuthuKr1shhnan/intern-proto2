@@ -32,7 +32,8 @@ const getToolColor = (toPath) => {
   }
 };
 
-const DropdownSection = ({ title, tools }) => {
+// Reusable Dropdown section that closes popover on click
+const DropdownSection = ({ title, tools, onItemClick }) => {
   return (
     <div className='h-auto'>
       <h4 className='text-xs font-semibold mb-4 text-gray-500 uppercase'>
@@ -46,6 +47,7 @@ const DropdownSection = ({ title, tools }) => {
             <li key={tool.to}>
               <NavLink
                 to={tool.to}
+                onClick={onItemClick}
                 className={({ isActive }) =>
                   `flex items-center gap-2 text-sm text-black hover:text-blue-600${
                     isActive ? " text-blue-600" : ""
@@ -70,6 +72,7 @@ const DropdownSection = ({ title, tools }) => {
 
 const Nav = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [openPopover, setOpenPopover] = useState(null); // null | "allTools" | "convert"
 
   return (
     <div className='sticky top-0 z-50 w-full border-b border-gray-200 bg-white'>
@@ -79,11 +82,13 @@ const Nav = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className='hidden md:flex gap-[56px]  text-[14px] font-medium text-black items-center'>
+        <div className='hidden md:flex gap-[56px] text-[14px] font-medium text-black items-center'>
           {/* All Tools Dropdown */}
-          <Popover.Root>
+          <Popover.Root open={openPopover === "allTools"} onOpenChange={(open) => setOpenPopover(open ? "allTools" : null)}>
             <Popover.Trigger className='hover:text-blue-600 cursor-pointer'>
-              <div className="flex gap-2 items-end">All Tools <img className="w-5 h-5" src={droparrow} alt='droparrow' /></div>
+              <div className='flex gap-2 items-end'>
+                All Tools <img className='w-5 h-5' src={droparrow} alt='drop' />
+              </div>
             </Popover.Trigger>
             <Popover.Content
               sideOffset={32}
@@ -92,15 +97,22 @@ const Nav = () => {
             >
               <Popover.Arrow className='fill-white' />
               {Object.entries(allTools).map(([section, items]) => (
-                <DropdownSection key={section} title={section} tools={items} />
+                <DropdownSection
+                  key={section}
+                  title={section}
+                  tools={items}
+                  onItemClick={() => setOpenPopover(null)}
+                />
               ))}
             </Popover.Content>
           </Popover.Root>
 
           {/* Convert Dropdown */}
-          <Popover.Root>
+          <Popover.Root open={openPopover === "convert"} onOpenChange={(open) => setOpenPopover(open ? "convert" : null)}>
             <Popover.Trigger className='hover:text-blue-600 cursor-pointer'>
-              <div className="flex gap-2 items-end"> Convert <img className="w-5 h-5" src={droparrow} alt='droparrow' /></div>
+              <div className='flex gap-2 items-end'>
+                Convert <img className='w-5 h-5' src={droparrow} alt='drop' />
+              </div>
             </Popover.Trigger>
             <Popover.Content
               sideOffset={32}
@@ -113,6 +125,7 @@ const Nav = () => {
                 tools={Object.values(allTools)
                   .flat()
                   .filter((tool) => ![1, 2, 3].includes(tool.id))}
+                onItemClick={() => setOpenPopover(null)}
               />
             </Popover.Content>
           </Popover.Root>
