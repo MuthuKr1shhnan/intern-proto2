@@ -4,7 +4,7 @@ import starfalse from "../assets/starfalse.svg";
 
 const ToolsCard = ({ tools = [], onToggleFavorite }) => {
   return (
-    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-x-8 gap-y-6 px-4 sm:px-6 md:px-10'>
+    <div className='grid grid-cols-1 sm:grid-cols-2  md:grid-cols-4 lg:grid-cols-4 gap-x-8 gap-y-6 px-4 sm:px-6 md:px-10'>
       {tools.map((tool) => {
         const hasValidIcon = tool.icon && tool.icon.trim() !== "";
         const hasValidCornerImage =

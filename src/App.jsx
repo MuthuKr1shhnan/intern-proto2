@@ -11,6 +11,7 @@ import PdfToPowerpoint from "./pages/converstions/PdfToPowerpoint";
 import WordToPdf from "./pages/converstions/WordToPdf";
 import PowerpointToPdf from "./pages/converstions/PowerpointToPdf";
 import ExcelToPdf from "./pages/converstions/ExcelToPdf";
+import Done from "./components/Done";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path='/word-to-pdf' element={<WordToPdf />} />
         <Route path='/powerpoint-to-pdf' element={<PowerpointToPdf />} />
         <Route path='/excel-to-pdf' element={<ExcelToPdf />} />
+        <Route path='/done' element={<Done />} />
       </Routes>
     </>
   );

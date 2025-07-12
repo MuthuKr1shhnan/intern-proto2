@@ -191,7 +191,7 @@ function Home() {
         </div>
 
         {/* ✅ Tools Grid */}
-        <div className='px-2 sm:px-0 '>
+        <div className='px-2  sm:px-0 '>
           <ToolsCard
             tools={getToolsForTab()}
             onToggleFavorite={handleToggleFavorite}
@@ -200,8 +200,8 @@ function Home() {
 
         {/* ✅ Empty State for Favorites */}
         {activeTab === "Favorites" && getToolsForTab().length === 0 && (
-          <div className='text-center text-sm  text-gray-500 mt-8'>
-            No favorite tools found.
+          <div className='text-center text-sm h-full  text-gray-500 mt-8'>
+            <p >No favorite tools found.</p>
           </div>
         )}
       </div>

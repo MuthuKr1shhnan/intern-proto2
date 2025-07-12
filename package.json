@@ -12,6 +12,7 @@
   "dependencies": {
     "@radix-ui/react-hover-card": "^1.1.14",
     "@tailwindcss/vite": "^4.1.11",
+    "axios": "^1.10.0",
     "gsap": "^3.13.0",
     "pdfjs-dist": "^3.11.174",
     "radix-ui": "^1.4.2",

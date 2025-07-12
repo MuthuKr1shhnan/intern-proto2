@@ -87,19 +87,24 @@
 
 // export default Merge;
 
-import { useState, useRef } from "react";
-import FileGetter from "../../components/FileGetter";
+import { useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { ReactSortable } from "react-sortablejs";
+
+import FileGetter from "../../components/FileGetter";
+import PdfPreviewCanvas from "../../components/PdfPreviewCanvas";
+import Done from "../../components/Done";
+
 import { tools } from "../../utils/cardData";
 import addbtn from "../../assets/addbtn.svg";
-
-import PdfPreviewCanvas from "../../components/PdfPreviewCanvas";
 import revealbtnSvg from "../../assets/arrowbtn.svg";
-import { ReactSortable } from "react-sortablejs";
 
 function Merge() {
   const [files, setFiles] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [mergedFileUrl, setMergedFileUrl] = useState(null);
+  const [isDone, setIsDone] = useState(false);
+
   const fileInputRef = useRef(null);
   const location = useLocation();
 
@@ -124,7 +129,23 @@ function Merge() {
   };
 
   const handleMerge = async () => {
-    alert("Merge logic goes here.");
+    if (files.length === 0) return;
+
+    // Simulate an API delay
+    try {
+      const dummyPdfContent =
+        "%PDF-1.3\n%����\n1 0 obj\n<<\n/Type /Catalog\n/Pages 2 0 R\n>>\nendobj\n2 0 obj\n<<\n/Type /Pages\n/Count 1\n/Kids [3 0 R]\n>>\nendobj\n3 0 obj\n<<\n/Type /Page\n/Parent 2 0 R\n/MediaBox [0 0 300 144]\n/Contents 4 0 R\n>>\nendobj\n4 0 obj\n<<\n/Length 44\n>>\nstream\nBT /F1 24 Tf 100 100 Td (Merged PDF) Tj ET\nendstream\nendobj\nxref\n0 5\n0000000000 65535 f \n0000000010 00000 n \n0000000056 00000 n \n0000000111 00000 n \n0000000221 00000 n \ntrailer\n<<\n/Root 1 0 R\n/Size 5\n>>\nstartxref\n310\n%%EOF";
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // simulate delay
+
+      const blob = new Blob([dummyPdfContent], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+
+      setMergedFileUrl(url);
+      setIsDone(true);
+    } catch (error) {
+      console.error("Simulated merge failed:", error);
+      alert("Something went wrong during the simulated merge.");
+    }
   };
 
   const currentPath = location.pathname.replace("/", "");
@@ -139,6 +160,16 @@ function Merge() {
     matchedData?.color?.startsWith("bg-[") && matchedData.color.includes("#")
       ? matchedData.color.slice(4, -1)
       : "#DBEAFE";
+
+  if (isDone) {
+    return (
+      <Done
+        action='Merge'
+        downloadUrl={mergedFileUrl}
+        onDownload={() => alert("Download is still in development.")}
+      />
+    );
+  }
 
   return (
     <FileGetter onFileSelect={handleFileSelect}>
@@ -246,8 +277,8 @@ function Merge() {
               />
             </button>
 
-            <div className='w-full h-full   flex flex-col justify-center p-6'>
-              <div className='w-full max-w-[260px]  flex flex-col gap-4 md:mt-auto'>
+            <div className='w-full h-full flex flex-col justify-center p-6'>
+              <div className='w-full max-w-[260px] flex flex-col gap-4 md:mt-auto'>
                 <div className='w-full bg-white border border-[#6B7582] pt-2 pb-2 px-3 rounded-[2px]'>
                   <p className='text-center text-[#6B7582]'>
                     Reorder your pdf by drag and drop the files as you like
