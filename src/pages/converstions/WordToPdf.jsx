@@ -10,7 +10,7 @@ function WordToPdf() {
     setFiles(withIds);
   };
   return (
-    <FileGetter onFileSelect={handleFileSelect}>
+    <FileGetter onFileSelect={handleFileSelect}  acceptedFileTypes=".doc,.docx,.docm,.rtf,.odt">
       {files.length > 0 &&
         (() => {
           alert("Development in progress!");
