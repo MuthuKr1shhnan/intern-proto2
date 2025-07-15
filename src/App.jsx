@@ -12,10 +12,12 @@ import WordToPdf from "./pages/converstions/WordToPdf";
 import PowerpointToPdf from "./pages/converstions/PowerpointToPdf";
 import ExcelToPdf from "./pages/converstions/ExcelToPdf";
 import Done from "./components/Done";
+import OfflineScreen from "./components/OfflineScreen";
 
 function App() {
   return (
     <>
+      <OfflineScreen />
       <Nav />
       <Routes>
         <Route path='/' element={<Home />} />
@@ -28,7 +30,6 @@ function App() {
         <Route path='/word-to-pdf' element={<WordToPdf />} />
         <Route path='/powerpoint-to-pdf' element={<PowerpointToPdf />} />
         <Route path='/excel-to-pdf' element={<ExcelToPdf />} />
-        <Route path='/done' element={<Done />} />
       </Routes>
     </>
   );
