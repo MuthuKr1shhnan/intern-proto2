@@ -52,13 +52,15 @@ function Merge() {
       const formData = new FormData();
       files.forEach((item) => {
         formData.append("files", item.file);
-        // console.log("Appending file:", item.file.name);
       });
 
-      const response = await axios.post("https://pdfworker-khgm.onrender.com/api/pdf/merge", formData, {
-        responseType: "blob",
-        // No manual headers – let Axios handle 'Content-Type'
-      });
+      const response = await axios.post(
+        "https://pdfworker-khgm.onrender.com/api/pdf/merge",
+        formData,
+        {
+          responseType: "blob",
+        }
+      );
 
       const blob = new Blob([response.data], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);

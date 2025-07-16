@@ -7,49 +7,62 @@ import pdftobannerimg from "../assets/pdftobannerimg.svg";
 import compressbannerimg from "../assets/compressbannerimg.svg";
 import splitbannerimg from "../assets/splitbannerimg.svg";
 import merge from "../assets/merge.svg";
-import split from "../assets/split.svg"; // Replace with your actual icon path
-import compress from "../assets/compress.svg"; // Replace with your actual icon path
-import pdftoword from "../assets/pdftoword.svg"; // Replace with your actual icon path
+import split from "../assets/split.svg";
+import compress from "../assets/compress.svg";
+import pdftoword from "../assets/pdftoword.svg";
 import CardSwap, { Card } from "../components/CardSwap";
 
 function Home() {
-  const [activeTab, setActiveTab] = useState("All");
-  const [favorites, setFavorites] = useState([]);
+  const COMING_SOON_IDS = [10]; // put all "Coming Soon" tool IDs here
 
+  // ✅ Load favorites from localStorage, but remove "coming soon"
+  const [favorites, setFavorites] = useState(() => {
+    const stored = localStorage.getItem("favoriteTools");
+    const parsed = stored ? JSON.parse(stored) : [];
+
+    const filtered = parsed.filter((id) => !COMING_SOON_IDS.includes(id));
+    localStorage.setItem("favoriteTools", JSON.stringify(filtered));
+    return filtered;
+  });
+
+  const [activeTab, setActiveTab] = useState("All");
+
+  // ✅ Prevent adding "Coming Soon" tools to favorites
   const handleToggleFavorite = (id) => {
-    setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id]
-    );
+    if (COMING_SOON_IDS.includes(id)) return;
+
+    setFavorites((prev) => {
+      const updated = prev.includes(id)
+        ? prev.filter((fid) => fid !== id)
+        : [...prev, id];
+      localStorage.setItem("favoriteTools", JSON.stringify(updated));
+      return updated;
+    });
   };
 
+  // ✅ Attach isFavorite flag to each tool
   const getToolsForTab = () => {
-    const toolsWithFavFlag = tools.map((tool) => ({
+    const toolsWithFavorites = tools.map((tool) => ({
       ...tool,
       isFavorite: favorites.includes(tool.id),
     }));
 
     return activeTab === "Favorites"
-      ? toolsWithFavFlag.filter((tool) => tool.isFavorite)
-      : toolsWithFavFlag;
+      ? toolsWithFavorites.filter((tool) => tool.isFavorite)
+      : toolsWithFavorites;
   };
 
   return (
-    <section
-      className='py-14 bg-[#f8f8f8] h-full'
-    
-    >
+    <section className='py-14 bg-[#f8f8f8] min-h-screen'>
       <div className='max-w-7xl mt-6 mx-auto px-4 sm:px-6 lg:px-10'>
         {/* ✅ Banner */}
-        <div
-          className={`w-full hidden md:flex lg:max-w-[798px] relative lg:h-[130px] mx-auto mb-10 bg-[#E9F1FE] rounded-[4px] opacity-90 overflow-hidden shadow-sm flex-col md:flex-row items-center md:items-stretch justify-between`}
-        >
+        <div className='w-full hidden md:flex lg:max-w-[798px] relative lg:h-[130px] mx-auto mb-10 bg-[#E9F1FE] rounded-[4px] opacity-90 overflow-hidden shadow-sm flex-col md:flex-row items-center md:items-stretch justify-between'>
           <img
             src={bannerpattern}
             className='absolute -z-1 opacity-8 bottom-0'
             alt='bannerpattern'
           />
-
-          {/* Left Side Text */}
+          {/* Left Text */}
           <div className='w-full flex flex-col justify-center lg:pl-[24px] md:w-2/3'>
             <h3 className='text-base sm:text-lg lg:text-[32px] font-extrabold text-[#2869DA]'>
               Your All-in-one PDF Utility
@@ -58,9 +71,8 @@ function Home() {
               Merge, split, convert & more for free with PDF Tools.
             </p>
           </div>
-
-          {/* ✅ Right Side Animated Image + Label */}
-          <div className='relative w-full  md:w-auto'>
+          {/* Right Image Rotation */}
+          <div className='relative w-full md:w-auto'>
             <CardSwap
               cardDistance={10}
               verticalDistance={8}
@@ -71,43 +83,33 @@ function Home() {
             >
               <Card customClass='w-[150px] h-[150px] rounded-md'>
                 <div
-                  className='w-full h-full rounded-[8px] relative  shadow-md flex items-center justify-center'
-                  style={{
-                    backgroundImage: `url(${mergebannerimg})`,
-                  }}
+                  className='w-full h-full rounded-[8px] relative shadow-md flex items-center justify-center'
+                  style={{ backgroundImage: `url(${mergebannerimg})` }}
                 >
-                  {/* Vertical Label */}
                   <div className='h-full flex items-center'>
-                    <span className=' mb-3 rotate-[-90deg] text-[24px] font-extrabold text-black'>
+                    <span className='mb-3 rotate-[-90deg] text-[24px] font-extrabold text-black'>
                       Merge
                     </span>
                   </div>
-
-                  {/* Icon */}
                   <img
-                    src={merge} // Replace with your actual icon path
-                    alt='Split Icon'
+                    src={merge}
+                    alt='Merge Icon'
                     className='w-[150px] mr-2 mt-1 h-[150px] mb-4'
                   />
                 </div>
               </Card>
               <Card customClass='w-[150px] h-[150px] rounded-md'>
                 <div
-                  className='w-full h-full rounded-[8px] relative  shadow-md flex items-center justify-center'
-                  style={{
-                    backgroundImage: `url(${splitbannerimg})`,
-                  }}
+                  className='w-full h-full rounded-[8px] relative shadow-md flex items-center justify-center'
+                  style={{ backgroundImage: `url(${splitbannerimg})` }}
                 >
-                  {/* Vertical Label */}
                   <div className='h-full flex items-center'>
-                    <span className=' mb-3 ml-3 rotate-[-90deg] text-[24px]  font-extrabold text-black'>
+                    <span className='mb-3 ml-3 rotate-[-90deg] text-[24px] font-extrabold text-black'>
                       Split
                     </span>
                   </div>
-
-                  {/* Icon */}
                   <img
-                    src={split} // Replace with your actual icon path
+                    src={split}
                     alt='Split Icon'
                     className='w-[150px] mr-3 mt-1 h-[150px] mb-4'
                   />
@@ -115,51 +117,34 @@ function Home() {
               </Card>
               <Card customClass='w-[150px] h-[150px] rounded-md'>
                 <div
-                  className='w-full h-full rounded-[8px] relative  shadow-md flex items-center justify-center'
-                  style={{
-                    backgroundImage: `url(${compressbannerimg})`,
-                  }}
+                  className='w-full h-full rounded-[8px] relative shadow-md flex items-center justify-center'
+                  style={{ backgroundImage: `url(${compressbannerimg})` }}
                 >
-                  {/* Vertical Label */}
                   <div className='h-full flex justify-center items-center'>
-                    <span className=' mb-3 rotate-[-90deg] text-[16px]  font-extrabold text-black'>
-                      Compress{" "}
-                      <span className=' mb-3 rotate-[-90deg] text-[16px]  font-extrabold text-black'>
-                        PDF
-                      </span>
+                    <span className='mb-3 rotate-[-90deg] text-[16px] font-extrabold text-black'>
+                      Compress <br /> PDF
                     </span>
                   </div>
-
-                  {/* Icon */}
                   <img
-                    src={compress} // Replace with your actual icon path
-                    alt='Split Icon'
+                    src={compress}
+                    alt='Compress Icon'
                     className='w-[120px] mr-2 mt-1 h-[120px] mb-4'
                   />
                 </div>
               </Card>
               <Card customClass='w-[150px] h-[150px] rounded-md'>
                 <div
-                  className='w-full h-full rounded-[8px] relative  shadow-md flex items-center justify-center'
-                  style={{
-                    backgroundImage: `url(${pdftobannerimg})`,
-                  }}
+                  className='w-full h-full rounded-[8px] relative shadow-md flex items-center justify-center'
+                  style={{ backgroundImage: `url(${pdftobannerimg})` }}
                 >
-                  {/* Vertical Label */}
                   <div className='h-full flex items-center'>
-                    <span className=' mb-3 rotate-[-90deg] text-[16px]  font-extrabold text-black'>
-                      PDF to
-                      <span className=' mb-3 rotate-[-90deg] text-[16px]  font-extrabold text-black'>
-                        {" "}
-                      </span>
-                      Anything
+                    <span className='mb-3 rotate-[-90deg] text-[16px] font-extrabold text-black'>
+                      PDF to Anything
                     </span>
                   </div>
-
-                  {/* Icon */}
                   <img
-                    src={pdftoword} // Replace with your actual icon path
-                    alt='Split Icon'
+                    src={pdftoword}
+                    alt='Convert Icon'
                     className='w-[100px] mr-3 mt-1 h-[100px] mb-4'
                   />
                 </div>
@@ -191,17 +176,17 @@ function Home() {
         </div>
 
         {/* ✅ Tools Grid */}
-        <div className='px-2  sm:px-0 '>
+        <div className='px-2 sm:px-0'>
           <ToolsCard
             tools={getToolsForTab()}
             onToggleFavorite={handleToggleFavorite}
           />
         </div>
 
-        {/* ✅ Empty State for Favorites */}
+        {/* ✅ Empty Favorites Message */}
         {activeTab === "Favorites" && getToolsForTab().length === 0 && (
-          <div className='text-center text-sm h-full  text-gray-500 mt-8'>
-            <p >No favorite tools found.</p>
+          <div className='text-center text-sm h-full text-gray-500 mt-8'>
+            <p>No favorite tools found.</p>
           </div>
         )}
       </div>

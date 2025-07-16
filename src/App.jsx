@@ -11,13 +11,10 @@ import PdfToPowerpoint from "./pages/converstions/PdfToPowerpoint";
 import WordToPdf from "./pages/converstions/WordToPdf";
 import PowerpointToPdf from "./pages/converstions/PowerpointToPdf";
 import ExcelToPdf from "./pages/converstions/ExcelToPdf";
-import Done from "./components/Done";
-import OfflineScreen from "./components/OfflineScreen";
 
 function App() {
   return (
     <>
-      <OfflineScreen />
       <Nav />
       <Routes>
         <Route path='/' element={<Home />} />

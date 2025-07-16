@@ -4,7 +4,7 @@ import starfalse from "../assets/starfalse.svg";
 
 const ToolsCard = ({ tools = [], onToggleFavorite }) => {
   return (
-    <div className='grid grid-cols-1 sm:grid-cols-2  md:grid-cols-4 lg:grid-cols-4 gap-x-8 gap-y-6 px-4 sm:px-6 md:px-10'>
+    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-x-8 gap-y-12 px-4 sm:px-6 md:px-10'>
       {tools.map((tool) => {
         const hasValidIcon = tool.icon && tool.icon.trim() !== "";
         const hasValidCornerImage =
@@ -28,15 +28,19 @@ const ToolsCard = ({ tools = [], onToggleFavorite }) => {
                   onToggleFavorite(tool.id);
                 }}
                 title={
-                  tool.isFavorite ? "Remove from Favorites" : "Add to Favorites"
+                  tool.isFavorite
+                    ? "Remove from Favorites"
+                    : "Add to Favorites"
                 }
                 className='absolute top-2 right-2 z-20'
               >
-                <img
-                  src={tool.isFavorite ? startrue : starfalse}
-                  alt='Favorite Star'
-                  className='w-5 h-5'
-                />
+                <div className="w-7 h-7 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full shadow-sm">
+                  <img
+                    src={tool.isFavorite ? startrue : starfalse}
+                    alt='Favorite Star'
+                    className='w-5 h-5 block'
+                  />
+                </div>
               </button>
             )}
 
@@ -50,18 +54,18 @@ const ToolsCard = ({ tools = [], onToggleFavorite }) => {
                 <img
                   src={tool.icon}
                   alt={tool.title}
-                  className='w-10 h-10 mb-2 '
+                  className='w-10 h-10 mb-2'
                 />
               )}
 
               <div
-                className={`flex items-center w-full  justify-${
+                className={`flex items-center w-full justify-${
                   hasValidIcon ? "start" : "center h-full"
                 } gap-2`}
               >
                 <h3
                   className={`text-[16px] font-bold text-black ${
-                    tool.icon ? "text-start" : "text-center "
+                    tool.icon ? "text-start" : "text-center"
                   } leading-tight`}
                 >
                   {tool.title}
