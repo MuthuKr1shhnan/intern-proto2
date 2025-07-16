@@ -7,16 +7,21 @@ body {
   font-optical-sizing: auto;
   font-weight: <weight>;
   font-style: normal;
+  -webkit-font-smoothing: antialiased !important;
+  text-rendering: optimizeLegibility !important;
 
 }
 
 .tool::-webkit-scrollbar {
   width: 8px;
-  background-color: #f1f1f1; /* Light neutral background */
+  background-color: #f1f1f1;
+  /* Light neutral background */
 }
 
 .tool::-webkit-scrollbar-thumb {
-  background-color: #a0a0a0; /* Medium gray for thumb */
-  border: 1px solid #888888; /* Slight contrast for border */
+  background-color: #a0a0a0;
+  /* Medium gray for thumb */
+  border: 1px solid #888888;
+  /* Slight contrast for border */
   border-radius: 8px;
 }

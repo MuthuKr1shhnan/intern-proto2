@@ -78,14 +78,25 @@ const Done = ({ action = "Merge", downloadUrl, onDownload, isCompleted }) => {
           <h1 className='text-lg sm:text-xl font-semibold text-gray-800 text-center'>
             {status === "uploading" ? "Uploading..." : "Processing..."}
           </h1>
-          <div className='w-full flex items-center gap-4'>
-            <div className='w-full bg-gray-300 rounded-full h-3 mt-2'>
-              <div
-                className='bg-blue-600 h-3 rounded-full transition-all'
-                style={{ width: `${progress}%` }}
-              ></div>
-            </div>
-            <span className='text-sm h-3 text-gray-500'>{progress}%</span>
+          <div className='w-full flex justify-center items-center gap-4'>
+            {/* Spinner */}
+            {status === "processing" && (
+              <div className='flex justify-center items-center mt-2'>
+                <div className='w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin'></div>
+              </div>
+            )}
+            {/* Progress Bar */}
+            {status === "uploading" && (
+              <div className='w-full bg-gray-300 rounded-full h-3 mt-2'>
+                <div
+                  className='bg-blue-600 h-3 rounded-full transition-all'
+                  style={{ width: `${progress}%` }}
+                ></div>
+              </div>
+            )}
+            {status == "uploading" && (
+              <span className='text-sm h-3 text-gray-500'>{progress}%</span>
+            )}
           </div>
         </div>
       );

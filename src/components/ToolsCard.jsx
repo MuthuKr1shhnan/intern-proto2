@@ -43,12 +43,13 @@ const ToolsCard = ({ tools = [], onToggleFavorite }) => {
                 </div>
               </button>
             )}
-
+            {/* Overlay */}
+            <div className="absolute bg-black opacity-0.5 blur-[100%] w-full h-full top-0 left-0 z-1"/>
             {/* Main Content */}
             <Link
               to={tool.link}
               title={tool.title}
-              className='block h-full relative z-10'
+              className='block h-full relative z-5'
             >
               {hasValidIcon && (
                 <img
