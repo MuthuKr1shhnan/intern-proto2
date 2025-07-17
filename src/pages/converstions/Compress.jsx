@@ -75,7 +75,7 @@ function Compress() {
                     className='flex flex-col items-center transition-all duration-200'
                   >
                     <div className='relative w-[150px] h-[182px] flex justify-center items-center bg-white hover:shadow-md overflow-hidden'>
-                      <div className='absolute top-0 left-0 bg-black text-white text-[10px] px-1 py-[2px] rounded-br z-10'>
+                      <div className='absolute top-0 left-0 bg-black text-white text-[10px] px-1 py-[2px] rounded-br z-1'>
                         PDF
                       </div>
                       <PdfPreviewCanvas file={item.file} pageNumber={1} />

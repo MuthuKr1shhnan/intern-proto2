@@ -148,7 +148,7 @@ function Merge() {
                       className='flex flex-col items-center transition-all duration-200'
                     >
                       <div className='relative w-[150px] h-[182px] flex justify-center items-center bg-white hover:shadow-md overflow-hidden'>
-                        <div className='absolute top-0 left-0 bg-black text-white text-[10px] px-1 py-[2px] rounded-br z-10'>
+                        <div className='absolute top-0 left-0 bg-black text-white text-[10px] px-1 py-[2px] rounded-br z-1'>
                           PDF
                         </div>
                         <PdfPreviewCanvas file={item.file} pageNumber={1} />
@@ -160,10 +160,10 @@ function Merge() {
                   ))}
                 </ReactSortable>
 
-                {/* Add Button */}
+                {/* Add Button for md device */}
                 <button
                   onClick={handleAddClick}
-                  className='absolute md:right-[-20px] -right-12 top-4 md:top-1/2 transform -translate-y-1/2 z-10'
+                  className='absolute hidden md:block md:right-[-20px] -right-12 top-4 md:top-1/2 transform -translate-y-1/2 z-10'
                 >
                   <img src={addbtn} alt='Add PDF' className='w-10 h-10' />
                 </button>
@@ -199,7 +199,7 @@ function Merge() {
             {/* Reveal Btn (Mobile) */}
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className='md:hidden absolute -left-6 top-1/2 transform -translate-y-1/2 z-50 flex items-center justify-center'
+              className='md:hidden absolute  -left-7 top-1/2 transform -translate-y-1/2 z-50 flex items-center justify-center'
             >
               <img
                 src={revealbtnSvg}
@@ -227,6 +227,12 @@ function Merge() {
               </button>
             </div>
           </div>
+          <button
+            onClick={handleAddClick}
+            className='absolute right-3 top-2/6 md:hidden transform -translate-y-1/2 '
+          >
+            <img src={addbtn} alt='Add PDF' className='w-10 h-10' />
+          </button>
         </div>
       )}
     </FileGetter>

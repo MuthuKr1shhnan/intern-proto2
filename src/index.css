@@ -25,3 +25,12 @@ body {
   /* Slight contrast for border */
   border-radius: 8px;
 }
+
+@media (max-width: 768px){
+  .tool::-webkit-scrollbar {
+  width: 6px;
+  background-color: #f1f1f1;
+  /* Light neutral background */
+}
+
+}
