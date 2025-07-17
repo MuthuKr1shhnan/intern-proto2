@@ -163,7 +163,7 @@ function Merge() {
                 {/* Add Button */}
                 <button
                   onClick={handleAddClick}
-                  className='absolute right-[-20px] top-1/2 transform -translate-y-1/2 z-10'
+                  className='absolute md:right-[-20px] -right-12 top-4 md:top-1/2 transform -translate-y-1/2 z-10'
                 >
                   <img src={addbtn} alt='Add PDF' className='w-10 h-10' />
                 </button>

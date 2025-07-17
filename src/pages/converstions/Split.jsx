@@ -445,7 +445,7 @@ function Split() {
                             {splitRanges.length > 1 && (
                               <button
                                 onClick={() => removeRange(i)}
-                                className='text-red-500 text-xs hover:underline'
+                                className='text-red-400 text-xs font-bold hover:underline'
                               >
                                 Remove
                               </button>
