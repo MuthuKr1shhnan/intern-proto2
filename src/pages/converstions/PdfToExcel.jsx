@@ -1,9 +1,21 @@
-import FileGetter from "../../components/FileGetter";
 import { useState } from "react";
-import { tools } from "../../utils/cardData";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
+
+import FileGetter from "../../components/FileGetter";
 import PdfPreviewCanvas from "../../components/PdfPreviewCanvas";
+import Done from "../../components/Done";
+import { tools } from "../../utils/cardData";
+
 function PdfToExcel() {
   const [files, setFiles] = useState([]);
+  const [convertedFileUrl, setConvertedFileUrl] = useState(null);
+  const [isDone, setIsDone] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
+
+  const location = useLocation();
+  const base_URL = import.meta.env.VITE_BASE_URL;
+
   const handleFileSelect = (selected) => {
     const withIds = selected.map((file, i) => ({
       id: `${file.name}-${Date.now()}-${i}`,
@@ -11,9 +23,39 @@ function PdfToExcel() {
     }));
     setFiles(withIds);
   };
+
   const handlePdfToExcel = async () => {
-    alert("Compress logic goes here.");
+    if (files.length === 0) {
+      alert("Please upload a PDF file.");
+      return;
+    }
+
+    try {
+      setIsDone(true);
+      const formData = new FormData();
+      formData.append("file", files[0].file); // assuming only one file for this tool
+
+      const response = await axios.post(
+        `${base_URL}api/pdf/pdf-to-excel/?mode=single`,
+        formData,
+        {
+          responseType: "blob",
+        }
+      );
+
+      const blob = new Blob([response.data], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = URL.createObjectURL(blob);
+      setConvertedFileUrl(url);
+      setIsCompleted(true);
+    } catch (error) {
+      console.error("PDF to Excel failed:", error);
+      alert("Something went wrong while converting. Try again.");
+    }
   };
+
   const currentPath = location.pathname.replace("/", "");
   const matchedData = tools.find(
     (tool) => tool.link.replace("/", "") === currentPath
@@ -26,17 +68,36 @@ function PdfToExcel() {
     matchedData?.color?.startsWith("bg-[") && matchedData.color.includes("#")
       ? matchedData.color.slice(4, -1)
       : "#DBEAFE";
+
+  if (isDone) {
+    return (
+      <Done
+        action='Convert'
+        downloadUrl={convertedFileUrl}
+        onDownload={() => {
+          const link = document.createElement("a");
+          link.href = convertedFileUrl;
+          link.download = "converted.xlsx";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }}
+        isCompleted={isCompleted}
+      />
+    );
+  }
+
   return (
     <FileGetter onFileSelect={handleFileSelect} multipleFiles={false}>
       {files.length > 0 && (
         <div
-          className='relative flex flex-col  overflow-y-auto overflow-x-hidden'
+          className='relative flex flex-col overflow-y-auto overflow-x-hidden'
           style={{ height: "calc(100vh - 60px)" }}
         >
           <div className='relative flex flex-col items-center h-full tool px-6 md:px-28 bg-[#f8f8f8] overflow-y-auto text-center'>
             {/* Header */}
             <div
-              className='sticky top-0 z-10 w-full md:w-[45%] mx-auto overflow-hidden p-[12px] pb-6 md:pl-8 rounded-[4px] h-[88px] md:h-[105px] mt-[80px] mb-6 text-start'
+              className='sticky top-0 z-10 w-full md:w-[50%] mx-auto overflow-hidden p-[12px] pb-6 md:pl-8 rounded-[4px] h-[88px] md:h-[105px] mt-[80px] mb-6 text-start'
               style={{ backgroundColor: extractedColor }}
             >
               <h1 className='text-[20px] md:text-[32px] font-bold text-gray-800'>
@@ -53,7 +114,8 @@ function PdfToExcel() {
                 />
               )}
             </div>
-            {/* Page Previews */}
+
+            {/* Page Preview */}
             <div className='flex justify-around gap-y-2 pt-2 pl-5 pr-5 md:pl-0 md:pr-0 flex-wrap'>
               <div className='relative w-auto bg-[#e2e2e3] rounded-lg py-10 px-6 flex justify-center gap-6 flex-wrap min-h-[260px]'>
                 {files.map((item) => (
@@ -74,14 +136,15 @@ function PdfToExcel() {
                 ))}
               </div>
             </div>
+
+            {/* Action Button */}
             <button
               onClick={handlePdfToExcel}
-              className='sticky block md:hidde mt-auto  bottom-20 bg-[#2869DA] text-white py-3 rounded-md w-[254px] hover:bg-blue-700 shadow '
+              className='sticky block  mt-auto bottom-20 bg-[#2869DA] text-white py-3 rounded-md w-[254px] hover:bg-blue-700 shadow'
             >
-             PDF to Excel
+              PDF to Excel
             </button>
           </div>
-        
         </div>
       )}
     </FileGetter>
