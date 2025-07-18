@@ -20,6 +20,7 @@ function Merge() {
 
   const fileInputRef = useRef(null);
   const location = useLocation();
+  const base_URL = import.meta.env.VITE_BASE_URL
 
   const handleFileSelect = (selected) => {
     const withIds = selected.map((file, i) => ({
@@ -55,7 +56,7 @@ function Merge() {
       });
 
       const response = await axios.post(
-        "https://pdfworker-khgm.onrender.com/api/pdf/merge",
+        `${base_URL}api/pdf/merge`,
         formData,
         {
           responseType: "blob",
