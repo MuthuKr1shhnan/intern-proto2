@@ -62,7 +62,7 @@ const Done = ({ action = "Merge", downloadUrl, onDownload, isCompleted }) => {
             </h1>
           </div>
           <p className='text-sm text-gray-600 mt-1 text-center'>
-            Your files are {action.toLowerCase()} action successfully completed.
+           🎉 All done! Your requested process({action.toLowerCase()}) finished successfully. You can Download Now! 
           </p>
           <button
             onClick={handleDownload}
