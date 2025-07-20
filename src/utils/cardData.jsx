@@ -96,7 +96,7 @@ export const tools = [
     description: "",
     icon: false,
     cornerImage: "",
-    link: "#-pdf",
+    link: null,
     color: "bg-[#FFEFF8]",
   },
 ];
