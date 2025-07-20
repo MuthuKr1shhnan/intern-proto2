@@ -42,7 +42,7 @@ function WordToPdf() {
   if (isDone) {
     return (
       <Done
-        action='Convert'
+        action='Word to PDF'
         downloadUrl={convertedFileUrl}
         onDownload={() => {
           const link = document.createElement("a");

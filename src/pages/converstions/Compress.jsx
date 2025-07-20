@@ -2,15 +2,20 @@ import { useState } from "react";
 import FileGetter from "../../components/FileGetter";
 import { useLocation } from "react-router-dom";
 import { tools } from "../../utils/cardData";
-
 import PdfPreviewCanvas from "../../components/PdfPreviewCanvas";
 import revealbtnSvg from "../../assets/arrowbtn.svg";
+import Done from "../../components/Done";
+import axios from "axios";
 
 function Compress() {
   const [files, setFiles] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
-
+  const [mode, setMode] = useState("high");
+  const [compressedFileUrl, setCompressedFileUrl] = useState(null);
+  const [isDone, setIsDone] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
+  const base_URL = import.meta.env.VITE_BASE_URL;
   const handleFileSelect = (selected) => {
     const withIds = selected.map((file, i) => ({
       id: `${file.name}-${Date.now()}-${i}`,
@@ -20,11 +25,36 @@ function Compress() {
   };
 
   const handleCompress = async () => {
-    alert("Compress logic goes here.");
+    if (!files.length) return;
+
+    const formData = new FormData();
+    formData.append("file", files[0].file);
+    formData.append("level", mode);
+
+    try {
+      setIsDone(true);
+      const response = await axios.post(
+        `${base_URL}api/pdf/compress-pdf`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          responseType: "blob",
+        }
+      );
+      setIsCompleted(true);
+
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      setCompressedFileUrl(url);
+    } catch (error) {
+      console.error("Compression failed:", error);
+      alert("Failed to compress PDF. Please try again.");
+    }
   };
 
   const currentPath = location.pathname.replace("/", "");
-  const [mode, setMode] = useState("high");
   const matchedData = tools.find(
     (tool) => tool.link.replace("/", "") === currentPath
   );
@@ -36,6 +66,24 @@ function Compress() {
     matchedData?.color?.startsWith("bg-[") && matchedData.color.includes("#")
       ? matchedData.color.slice(4, -1)
       : "#DBEAFE";
+
+  if (isDone) {
+    return (
+      <Done
+        action='Compress'
+        downloadUrl={compressedFileUrl}
+        onDownload={() => {
+          const link = document.createElement("a");
+          link.href = compressedFileUrl;
+          link.download = `compressed(${mode}).pdf`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }}
+        isCompleted={isCompleted}
+      />
+    );
+  }
 
   return (
     <FileGetter onFileSelect={handleFileSelect}>

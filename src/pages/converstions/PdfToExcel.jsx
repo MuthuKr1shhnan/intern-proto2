@@ -72,7 +72,7 @@ function PdfToExcel() {
   if (isDone) {
     return (
       <Done
-        action='Convert'
+        action='PDF to Excel'
         downloadUrl={convertedFileUrl}
         onDownload={() => {
           const link = document.createElement("a");

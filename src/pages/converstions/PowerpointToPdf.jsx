@@ -42,7 +42,7 @@ function PowerpointToPdf() {
   if (isDone) {
     return (
       <Done
-        action='Convert'
+        action='PowerPoint to PDF'
         downloadUrl={convertedFileUrl}
         onDownload={() => {
           const link = document.createElement("a");

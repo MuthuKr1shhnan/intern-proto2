@@ -41,7 +41,7 @@ function ExcelToPdf() {
   if (isDone) {
     return (
       <Done
-        action='Convert'
+        action='Excel to PDF'
         downloadUrl={convertedFileUrl}
         onDownload={() => {
           const link = document.createElement("a");
