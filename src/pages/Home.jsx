@@ -11,6 +11,7 @@ import split from "../assets/split.svg";
 import compress from "../assets/compress.svg";
 import pdftoword from "../assets/pdftoword.svg";
 import CardSwap, { Card } from "../components/CardSwap";
+import bgpattern from "../assets/bgpattern.svg";
 
 function Home() {
   const COMING_SOON_IDS = [10]; // put all "Coming Soon" tool IDs here
@@ -53,9 +54,10 @@ function Home() {
   };
 
   return (
-    <section className='py-14 bg-[#f8f8f8] min-h-screen'>
-      <div className='max-w-7xl mt-6 mx-auto px-4 sm:px-6 lg:px-10'>
+    <section className='py-14  min-h-screen'>
+      <div className='relative max-w-7xl mt-6 mx-auto px-4 sm:px-6 lg:px-10'>
         {/* ✅ Banner */}
+        <div className="fixed w-full h-full top-1 cover bg-center opacity-[30%] left-0 -z-1"  style={{ backgroundImage: `url(${bgpattern})` }}/>
         <div className='w-full hidden md:flex lg:max-w-[798px] relative lg:h-[130px] mx-auto mb-10 bg-[#E9F1FE] rounded-[4px] opacity-90 overflow-hidden shadow-sm flex-col md:flex-row items-center md:items-stretch justify-between'>
           <img
             src={bannerpattern}
