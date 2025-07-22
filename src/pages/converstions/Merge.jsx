@@ -180,14 +180,15 @@ function Merge() {
               </div>
             </div>
 
-            {/* Mobile Merge Button */}
+           
+          </div>
+           {/* Mobile Merge Button */}
             <button
               onClick={handleMerge}
-              className='sticky block md:hidden mx-auto bottom-2 bg-[#2869DA] text-white py-3 rounded-md w-[188px] hover:bg-blue-700 shadow mt-auto'
+              className='sticky block md:hidden mx-auto my-auto bottom-5 bg-[#2869DA] text-white py-3 rounded-md w-[188px] hover:bg-blue-700 shadow'
             >
               Merge PDF
             </button>
-          </div>
 
           {/* Right Sidebar */}
           <div
