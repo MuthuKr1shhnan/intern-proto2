@@ -47,36 +47,40 @@ function Split() {
 
   const handlePageClick = (pageNumber) => {
     if (mode === "extract") {
-      setSelectedPages(prev => {
+      setSelectedPages((prev) => {
         const newSelection = prev.includes(pageNumber)
-          ? prev.filter(p => p !== pageNumber)
+          ? prev.filter((p) => p !== pageNumber)
           : [...prev, pageNumber];
         return newSelection.sort((a, b) => a - b);
       });
-      
-      setPageInput(prev => {
-        const currentPages = prev === "all" ? 
-          Array.from({ length: totalPages }, (_, i) => i + 1) :
-          prev.split(",").map(p => parseInt(p.trim())).filter(p => !isNaN(p));
-        
+
+      setPageInput((prev) => {
+        const currentPages =
+          prev === "all"
+            ? Array.from({ length: totalPages }, (_, i) => i + 1)
+            : prev
+                .split(",")
+                .map((p) => parseInt(p.trim()))
+                .filter((p) => !isNaN(p));
+
         const newPages = currentPages.includes(pageNumber)
-          ? currentPages.filter(p => p !== pageNumber)
+          ? currentPages.filter((p) => p !== pageNumber)
           : [...currentPages, pageNumber];
-          
+
         return newPages.sort((a, b) => a - b).join(",");
       });
     } else if (mode === "split") {
       const currentRange = splitRanges[activeRangeIndex];
       let newFrom = currentRange.from;
       let newTo = currentRange.to;
-      
+
       if (!newFrom || !newTo) {
         newFrom = pageNumber.toString();
         newTo = pageNumber.toString();
       } else {
         const fromNum = parseInt(newFrom);
         const toNum = parseInt(newTo);
-        
+
         if (pageNumber < fromNum) {
           newFrom = pageNumber.toString();
         } else if (pageNumber > toNum) {
@@ -84,7 +88,7 @@ function Split() {
         } else {
           const fromDist = Math.abs(pageNumber - fromNum);
           const toDist = Math.abs(pageNumber - toNum);
-          
+
           if (fromDist < toDist) {
             newFrom = pageNumber.toString();
           } else {
@@ -92,11 +96,11 @@ function Split() {
           }
         }
       }
-      
+
       const updatedRanges = [...splitRanges];
       updatedRanges[activeRangeIndex] = { from: newFrom, to: newTo };
       setSplitRanges(updatedRanges);
-      
+
       if (newFrom && newTo) {
         const from = parseInt(newFrom);
         const to = parseInt(newTo);
@@ -105,10 +109,10 @@ function Split() {
           for (let i = from; i <= to; i++) {
             rangePages.push(i);
           }
-          
+
           const allSelected = splitRanges
             .filter((_, idx) => idx !== activeRangeIndex)
-            .flatMap(range => {
+            .flatMap((range) => {
               if (range.from && range.to) {
                 const f = parseInt(range.from);
                 const t = parseInt(range.to);
@@ -119,8 +123,10 @@ function Split() {
               return [];
             })
             .concat(rangePages);
-          
-          setSelectedPages(Array.from(new Set(allSelected)).sort((a, b) => a - b));
+
+          setSelectedPages(
+            Array.from(new Set(allSelected)).sort((a, b) => a - b)
+          );
         }
       }
     }
@@ -131,7 +137,9 @@ function Split() {
 
     if (mode === "extract") {
       if (pageInput === "all") {
-        alert(`✅ Simulating extract: All ${totalPages} pages will be extracted.`);
+        alert(
+          `✅ Simulating extract: All ${totalPages} pages will be extracted.`
+        );
       } else {
         const pages = pageInput
           .split(",")
@@ -143,7 +151,11 @@ function Split() {
           return;
         }
 
-        alert(`✅ Simulating extract: Pages [${pages.join(", ")}] will be extracted.`);
+        alert(
+          `✅ Simulating extract: Pages [${pages.join(
+            ", "
+          )}] will be extracted.`
+        );
       }
     } else if (mode === "split") {
       const validRanges = splitRanges
@@ -165,7 +177,9 @@ function Split() {
         return;
       }
 
-      const rangeList = validRanges.map(({ from, to }) => `${from}-${to}`).join(", ");
+      const rangeList = validRanges
+        .map(({ from, to }) => `${from}-${to}`)
+        .join(", ");
       alert(`✅ Simulating split: Ranges [${rangeList}] will be processed.`);
     } else {
       alert("❌ Please select a mode first.");
@@ -178,8 +192,8 @@ function Split() {
       updated[index][key] = value;
       setSplitRanges(updated);
       setActiveRangeIndex(index);
-      
-      const allSelected = updated.flatMap(range => {
+
+      const allSelected = updated.flatMap((range) => {
         if (range.from && range.to) {
           const from = parseInt(range.from);
           const to = parseInt(range.to);
@@ -189,7 +203,7 @@ function Split() {
         }
         return [];
       });
-      
+
       setSelectedPages(Array.from(new Set(allSelected)).sort((a, b) => a - b));
     }
   };
@@ -204,8 +218,8 @@ function Split() {
     const updated = splitRanges.filter((_, i) => i !== index);
     setSplitRanges(updated);
     setActiveRangeIndex(Math.min(activeRangeIndex, updated.length - 1));
-    
-    const allSelected = updated.flatMap(range => {
+
+    const allSelected = updated.flatMap((range) => {
       if (range.from && range.to) {
         const from = parseInt(range.from);
         const to = parseInt(range.to);
@@ -215,13 +229,13 @@ function Split() {
       }
       return [];
     });
-    
+
     setSelectedPages(Array.from(new Set(allSelected)).sort((a, b) => a - b));
   };
 
   const handlePageInputChange = (e) => {
     const value = e.target.value;
-    
+
     if (value === "all") {
       setPageInput("all");
       if (totalPages > 0) {
@@ -229,26 +243,26 @@ function Split() {
       }
       return;
     }
-    
+
     // Clean input - remove any non-digit characters except commas
-    const cleanedValue = value.replace(/[^\d,]/g, '');
-    
+    const cleanedValue = value.replace(/[^\d,]/g, "");
+
     // Remove duplicate commas and leading/trailing commas
     const normalizedValue = cleanedValue
-      .replace(/,+/g, ',')
-      .replace(/^,|,$/g, '');
-    
+      .replace(/,+/g, ",")
+      .replace(/^,|,$/g, "");
+
     // Split into array of numbers and filter out invalid entries
     const pages = normalizedValue
-      .split(',')
-      .map(p => parseInt(p.trim()))
-      .filter(p => !isNaN(p) && p > 0 && p <= totalPages);
-    
+      .split(",")
+      .map((p) => parseInt(p.trim()))
+      .filter((p) => !isNaN(p) && p > 0 && p <= totalPages);
+
     // Update selected pages
     setSelectedPages(pages);
-    
+
     // Update input value (show only valid numbers)
-    setPageInput(pages.join(','));
+    setPageInput(pages.join(","));
   };
 
   const location = useLocation();
@@ -280,8 +294,12 @@ function Split() {
               className='sticky top-0 z-10 w-full md:w-[72%] mx-auto overflow-hidden p-[12px] pb-6 md:pl-8  rounded-[4px] h-[88px] md:h-[105px] mt-[80px] mb-6 text-start'
               style={{ backgroundColor: extractedColor }}
             >
-              <h1 className='text-[20px] md:text-[32px] font-bold text-gray-800'>{title}</h1>
-              <p className='text-[12px] w-[80%] md:text-[16px] text-gray-500 mt-1'>{subtitle}</p>
+              <h1 className='text-[20px] md:text-[32px] font-bold text-gray-800'>
+                {title}
+              </h1>
+              <p className='text-[12px] w-[80%] md:text-[16px] text-gray-500 mt-1'>
+                {subtitle}
+              </p>
               {image && (
                 <img
                   src={image}
@@ -298,7 +316,9 @@ function Split() {
                   key={i}
                   onClick={() => handlePageClick(i + 1)}
                   className={`m-1 w-[144px] h-[204px] flex flex-col items-center justify-center relative border border-transparent rounded-[2px] shadow-[0_0_8px_0_rgba(0,0,0,0.08)] cursor-pointer ${
-                    selectedPages.includes(i + 1) ? 'bg-[#E9F1FE]' : 'bg-[#fdfdfd]'
+                    selectedPages.includes(i + 1)
+                      ? "bg-[#E9F1FE]"
+                      : "bg-[#fdfdfd]"
                   }`}
                 >
                   <div className='range__canvas'>
@@ -328,16 +348,17 @@ function Split() {
             style={{ width: "303px" }}
           >
             {/* Reveal Btn */}
+
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className='md:hidden absolute -left-6 top-1/2 transform -translate-y-1/2 z-50 flex items-center justify-center'
+              className='w-[20px] h-14 bg-[#2869DA] rounded-[4px] md:hidden absolute -left-5 top-1/2 transform -translate-y-1/2 z-50 flex items-center justify-center'
             >
               <img
                 src={revealbtnSvg}
                 alt=''
                 className={`transition-transform duration-300 ${
                   isSidebarOpen ? "rotate-180" : "rotate-0"
-                }`}
+                } w-4`}
               />
             </button>
 
@@ -370,8 +391,12 @@ function Split() {
                       />
                     </div>
                     <div>
-                      <p className='font-bold text-[14px] text-gray-800'>Extract pages</p>
-                      <p className='text-[12px] text-gray-500'>Separate pages as individual file</p>
+                      <p className='font-bold text-[14px] text-gray-800'>
+                        Extract pages
+                      </p>
+                      <p className='text-[12px] text-gray-500'>
+                        Separate pages as individual file
+                      </p>
                     </div>
                   </label>
                 </div>
@@ -380,7 +405,9 @@ function Split() {
                   <div className='pl-3 pr-3 pt-2 pb-2 rounded-[4px]'>
                     <div className='flex flex-col gap-2'>
                       <div className='flex justify-between'>
-                        <p className='font-semibold text-[14px] text-gray-800'>Pages</p>
+                        <p className='font-semibold text-[14px] text-gray-800'>
+                          Pages
+                        </p>
                         <button
                           onClick={handleExtractAll}
                           className='text-sm text-blue-600 underline'
@@ -429,8 +456,12 @@ function Split() {
                       />
                     </div>
                     <div>
-                      <p className='font-bold text-[14px] text-gray-800'>Split by page range</p>
-                      <p className='text-[12px] text-gray-500'>Split based on pages you select</p>
+                      <p className='font-bold text-[14px] text-gray-800'>
+                        Split by page range
+                      </p>
+                      <p className='text-[12px] text-gray-500'>
+                        Split based on pages you select
+                      </p>
                     </div>
                   </label>
                 </div>
@@ -439,9 +470,16 @@ function Split() {
                   <div className='pl-3 pr-3 pt-2 pb-2 rounded-[4px]'>
                     <div className='flex flex-col gap-2'>
                       {splitRanges.map((range, i) => (
-                        <div key={i} className={`flex flex-col gap-2 p-2 rounded ${activeRangeIndex === i ? 'bg-blue-50' : ''}`}>
+                        <div
+                          key={i}
+                          className={`flex flex-col gap-2 p-2 rounded ${
+                            activeRangeIndex === i ? "bg-blue-50" : ""
+                          }`}
+                        >
                           <div className='flex items-center justify-between'>
-                            <span className='text-sm font-medium text-gray-700'>Range {i + 1}</span>
+                            <span className='text-sm font-medium text-gray-700'>
+                              Range {i + 1}
+                            </span>
                             {splitRanges.length > 1 && (
                               <button
                                 onClick={() => removeRange(i)}

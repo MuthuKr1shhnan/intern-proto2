@@ -136,7 +136,7 @@ function Merge() {
 
             {/* Page Previews */}
             <div className='flex justify-around gap-y-2 pt-2 pl-5 pr-5 md:pl-0 md:pr-0 flex-wrap'>
-              <div className='relative w-auto bg-[#e2e2e3] rounded-lg py-10 px-6 flex justify-center gap-6 flex-wrap min-h-[260px]'>
+              <div className='relative w-auto bg-[#f4f4f4] rounded-lg py-10 px-6 flex justify-center gap-6 flex-wrap min-h-[260px]'>
                 <ReactSortable
                   list={files}
                   setList={setFiles}
@@ -200,14 +200,14 @@ function Merge() {
             {/* Reveal Btn (Mobile) */}
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className='md:hidden absolute  -left-7 top-1/2 transform -translate-y-1/2 z-50 flex items-center justify-center'
+             className='w-[20px] h-14 bg-[#2869DA] rounded-[4px] md:hidden absolute -left-5 top-1/2 transform -translate-y-1/2 z-50 flex items-center justify-center'
             >
               <img
                 src={revealbtnSvg}
                 alt='Toggle Sidebar'
                 className={`transition-transform duration-300 ${
                   isSidebarOpen ? "rotate-180" : "rotate-0"
-                }`}
+                } w-4`}
               />
             </button>
 
