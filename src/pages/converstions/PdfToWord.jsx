@@ -42,7 +42,7 @@ function PdfToWord() {
               <h1 className='text-[20px] md:text-[32px] font-bold text-gray-800'>
                 {title}
               </h1>
-              <p className='text-[12px] w-[80%] md:text-[16px] text-gray-500 mt-1'>
+              <p className='text-[12px] w-[80%] md:text-[16px] text-gray-300 mt-1'>
                 {subtitle}
               </p>
               {image && (
