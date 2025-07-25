@@ -9,6 +9,8 @@ import React, {
 } from "react";
 import gsap from "gsap";
 
+// 🎯 we get this component from react bits website
+
 export const Card = forwardRef(({ customClass, ...rest }, ref) => (
   <div
     ref={ref}

@@ -8,94 +8,116 @@ import Done from "../../components/Done";
 import axios from "axios";
 
 function Compress() {
-  const [files, setFiles] = useState([]);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const location = useLocation();
-  const [mode, setMode] = useState("high");
-  const [compressedFileUrl, setCompressedFileUrl] = useState(null);
-  const [isDone, setIsDone] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(false);
-  const base_URL = import.meta.env.VITE_BASE_URL;
+  // 📌 STATE VARIABLES 📌
+  // These are like boxes where we store information that can change
+  const [files, setFiles] = useState([]); // Stores the selected PDF files
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Controls if sidebar is open (mobile)
+  const location = useLocation(); // Helps us know which page we're on
+  const [mode, setMode] = useState("high"); // Stores compression mode (high/low)
+  const [compressedFileUrl, setCompressedFileUrl] = useState(null); // Stores the compressed file URL
+  const [isDone, setIsDone] = useState(false); // Tracks if compression is done
+  const [isCompleted, setIsCompleted] = useState(false); // Tracks if compression completed successfully
+  const base_URL = import.meta.env.VITE_BASE_URL; // Our server's base URL from environment variables
+
+  // 🖼️ HANDLE FILE SELECTION 🖼️
+  // This function runs when user selects files
   const handleFileSelect = (selected) => {
+    // We add unique IDs to each file to help React keep track of them
     const withIds = selected.map((file, i) => ({
-      id: `${file.name}-${Date.now()}-${i}`,
-      file,
+      id: `${file.name}-${Date.now()}-${i}`, // Unique ID using name, timestamp, and index
+      file, // The actual file object
     }));
-    setFiles(withIds);
+    setFiles(withIds); // Update our files state with the new files
   };
 
+  // 🗜️ HANDLE COMPRESSION 🗜️
+  // This function compresses the PDF when user clicks the button
   const handleCompress = async () => {
-    if (!files.length) return;
+    if (!files.length) return; // If no files, do nothing
 
+    // Prepare the data to send to server
     const formData = new FormData();
-    formData.append("file", files[0].file);
-    formData.append("level", mode);
+    formData.append("file", files[0].file); // Add the first file
+    formData.append("level", mode); // Add compression level (high/low)
 
     try {
-      setIsDone(true);
+      setIsDone(true); // Show we're starting compression
+      // Send request to our server's compress endpoint
       const response = await axios.post(
         `${base_URL}api/pdf/compress-pdf`,
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "multipart/form-data", // Important for file uploads
           },
-          responseType: "blob",
+          responseType: "blob", // We expect a PDF file (binary data) back
         }
       );
-      setIsCompleted(true);
+      setIsCompleted(true); // Mark as successfully completed
 
+      // Convert the response to a downloadable file
       const blob = new Blob([response.data], { type: "application/pdf" });
-      const url = URL.createObjectURL(blob);
-      setCompressedFileUrl(url);
+      const url = URL.createObjectURL(blob); // Create a URL we can use to download
+      setCompressedFileUrl(url); // Store this URL
     } catch (error) {
       console.error("Compression failed:", error);
       alert("Failed to compress PDF. Please try again.");
     }
   };
 
+  // 🔍 GET CURRENT TOOL INFO 🔍
+  // Find which tool we're using based on the current URL path
   const currentPath = location.pathname.replace("/", "");
   const matchedData = tools.find(
     (tool) => tool.link.replace("/", "") === currentPath
   );
 
+  // Extract tool details or use defaults if not found
   const title = matchedData?.title || "Tool";
   const subtitle = matchedData?.description || "Upload and process your files";
   const image = matchedData?.icon || "";
+  // Extract the color from the tool data (special handling for Tailwind bg-[#color] format)
   const extractedColor =
     matchedData?.color?.startsWith("bg-[") && matchedData.color.includes("#")
       ? matchedData.color.slice(4, -1)
-      : "#DBEAFE";
+      : "#DBEAFE"; // Default color if not found
 
+  // 🎉 DONE SCREEN 🎉
+  // If compression is done, show the Done component instead of the main UI
   if (isDone) {
     return (
       <Done
         action='Compress'
         downloadUrl={compressedFileUrl}
         onDownload={() => {
+          // Create a hidden link and click it to trigger download
           const link = document.createElement("a");
           link.href = compressedFileUrl;
-          link.download = `compressed(${mode}).pdf`;
+          link.download = `compressed(${mode}).pdf`; // Set filename with compression mode
           document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
+          link.click(); // Programmatically click the link
+          document.body.removeChild(link); // Clean up
         }}
         isCompleted={isCompleted}
       />
     );
   }
 
+  // 🖥️ MAIN UI RENDER 🖥️
   return (
+    // FileGetter handles the file selection UI and passes files to our handleFileSelect
     <FileGetter onFileSelect={handleFileSelect}>
-      <section  className="overflow-y-hidden" style={{ height: "calc(100vh - 60px)" }}>
+      {/* Main container with full viewport height minus header */}
+      <section className="overflow-y-hidden" style={{ height: "calc(100vh - 60px)" }}>
+        {/* Only show preview area if files are selected */}
         {files.length > 0 && (
           <div
             className='relative flex flex-col md:flex-row overflow-y-auto overflow-x-hidden'
             style={{ height: "calc(100vh - 60px)" }}
           >
-            {/* Left Section */}
+            {/* LEFT SECTION - Preview Area */}
             <div className='relative h-full flex-1 tool px-6 md:px-28 bg-[#f8f8f8] overflow-y-auto text-center'>
-              {/* Header */}
+              {/* Tool Header with color from tool data */}
               <div
                 className='sticky top-0 z-10 w-full md:w-[72%] mx-auto overflow-hidden p-[12px] pb-6 md:pl-8 rounded-[4px] h-[88px] md:h-[105px] mt-[80px] mb-6 text-start'
                 style={{ backgroundColor: extractedColor }}
@@ -106,6 +128,7 @@ function Compress() {
                 <p className='text-[12px] w-[80%] md:text-[16px] text-gray-500 mt-1'>
                   {subtitle}
                 </p>
+                {/* Tool icon displayed in the corner */}
                 {image && (
                   <img
                     src={image}
@@ -114,20 +137,26 @@ function Compress() {
                   />
                 )}
               </div>
-              {/* Page Previews */}
+
+              {/* PDF Preview Thumbnails */}
               <div className='flex justify-around gap-y-2 pt-2 pl-5 pr-5 md:pl-0 md:pr-0 flex-wrap'>
                 <div className='relative w-auto bg-[#f4f4f4] rounded-lg py-10 px-6 flex justify-center gap-6 flex-wrap min-h-[260px]'>
+                  {/* Show each selected file as a preview card */}
                   {files.map((item) => (
                     <div
-                      key={item.id}
+                      key={item.id} // Important for React to track each file
                       className='flex flex-col items-center transition-all duration-200'
                     >
+                      {/* PDF Preview Container */}
                       <div className='relative w-[150px] h-[182px] flex justify-center items-center bg-white hover:shadow-md overflow-hidden'>
+                        {/* PDF badge in corner */}
                         <div className='absolute top-0 left-0 bg-black text-white text-[10px] px-1 py-[2px] rounded-br z-1'>
                           PDF
                         </div>
+                        {/* Component that shows the first page of the PDF */}
                         <PdfPreviewCanvas file={item.file} pageNumber={1} />
                       </div>
+                      {/* File name below preview */}
                       <p className='mt-2 text-xs text-gray-700 max-w-[110px] text-center truncate'>
                         {item.file.name}
                       </p>
@@ -137,7 +166,7 @@ function Compress() {
               </div>
             </div>
            
-            {/* Right Sidebar */}
+            {/* RIGHT SIDEBAR - Compression Options */}
             <div
               className={`fixed top-0 right-0 h-full bg-white z-10 md:static md:translate-x-0 transition-transform duration-300
                 border-l border-[#E5E8EB]
@@ -145,7 +174,7 @@ function Compress() {
               `}
               style={{ width: "303px" }}
             >
-              {/* Reveal Btn (Mobile) */}
+              {/* Mobile Toggle Button (only shows on small screens) */}
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                 className='w-[20px] h-14 bg-[#2869DA] rounded-[4px] md:hidden absolute -left-5 top-1/2 transform -translate-y-1/2 z-50 flex items-center justify-center'
@@ -158,16 +187,19 @@ function Compress() {
                   } w-4`}
                 />
               </button>
+
+              {/* Sidebar Content */}
               <div className='w-full h-full flex flex-col justify-center p-6'>
                 <div className='w-full max-w-[260px] flex flex-col gap-4 md:mt-auto'>
                   <div className='flex flex-col gap-3'>
-                    {/* High Compression */}
+                    {/* HIGH COMPRESSION OPTION */}
                     <div
                       className={`pl-3 pr-3 pt-2 pb-2 ${
                         mode === "high" ? "bg-[#E9F1FE]" : "bg-none"
                       } border border-[#E9F1FE] rounded-[4px]`}
                     >
                       <label className='flex items-start gap-2 cursor-pointer'>
+                        {/* Hidden radio input */}
                         <input
                           type='radio'
                           name='compression'
@@ -176,6 +208,7 @@ function Compress() {
                           onChange={() => setMode("high")}
                           className='peer hidden'
                         />
+                        {/* Custom radio button */}
                         <div className='mt-[6px] w-5 h-5 rounded-full border-2 border-gray-400 flex items-center justify-center peer-checked:border-[#2869DA]'>
                           <div
                             className={`w-2.5 h-2.5 rounded-full bg-[#2869DA] ${
@@ -193,7 +226,8 @@ function Compress() {
                         </div>
                       </label>
                     </div>
-                    {/* Low Compression */}
+
+                    {/* LOW COMPRESSION OPTION */}
                     <div
                       className={`pl-3 pr-3 pt-2 pb-2 ${
                         mode === "low" ? "bg-[#E9F1FE]" : "bg-none"
@@ -227,6 +261,7 @@ function Compress() {
                     </div>
                   </div>
                 </div>
+                {/* Desktop Compress Button */}
                 <button
                   onClick={handleCompress}
                   className='w-full mt-auto hidden md:block bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 shadow'
@@ -237,13 +272,13 @@ function Compress() {
             </div>
           </div>
         )}
-         {/* Mobile Compress Button */}
-            <button
-              onClick={handleCompress}
-              className='sticky block md:hidden mx-auto bottom-2 bg-[#2869DA] text-white py-3 z-1 rounded-md w-[188px] hover:bg-blue-700 shadow mt-auto'
-            >
-              Compress PDF
-            </button>
+        {/* Mobile Compress Button (only shows on small screens) */}
+        <button
+          onClick={handleCompress}
+          className='sticky block md:hidden mx-auto bottom-2 bg-[#2869DA] text-white py-3 z-1 rounded-md w-[188px] hover:bg-blue-700 shadow mt-auto'
+        >
+          Compress PDF
+        </button>
       </section>
     </FileGetter>
   );
