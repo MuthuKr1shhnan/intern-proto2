@@ -21,7 +21,7 @@ function Split() {
   const [isCompleted, setIsCompleted] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState(null);
   const [error, setError] = useState(null);
-
+  const base_URL = import.meta.env.VITE_BASE_URL; 
   const handleFileSelect = (selected) => {
     setFiles(selected);
     setSelectedPages([]);
@@ -177,7 +177,7 @@ function Split() {
       }
 
       const response = await axios.post(
-        `https://pdfworker-khgm.onrender.com/pdf/extract-and-zip`,
+        `${base_URL}pdf/extract-and-zip`,
         formData,
         {
           responseType: "blob",
