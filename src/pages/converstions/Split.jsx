@@ -5,6 +5,8 @@ import { tools } from "../../utils/cardData";
 import { getDocument } from "pdfjs-dist";
 import PdfPreviewCanvas from "../../components/PdfPreviewCanvas";
 import revealbtnSvg from "../../assets/arrowbtn.svg";
+import axios from "axios";
+import Done from "../../components/Done";
 
 function Split() {
   const [files, setFiles] = useState([]);
@@ -15,6 +17,10 @@ function Split() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedPages, setSelectedPages] = useState([]);
   const [activeRangeIndex, setActiveRangeIndex] = useState(0);
+  const [isDone, setIsDone] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [downloadUrl, setDownloadUrl] = useState(null);
+  const [error, setError] = useState(null);
 
   const handleFileSelect = (selected) => {
     setFiles(selected);
@@ -132,57 +138,60 @@ function Split() {
     }
   };
 
-  const handleSplit = () => {
-    if (!files[0]) return alert("Please upload a PDF first.");
+  const handleSplit = async () => {
+    if (!files[0]) {
+      setError("Please upload a PDF first.");
+      return;
+    }
 
-    if (mode === "extract") {
-      if (pageInput === "all") {
-        alert(
-          `✅ Simulating extract: All ${totalPages} pages will be extracted.`
-        );
-      } else {
-        const pages = pageInput
-          .split(",")
-          .map((p) => parseInt(p.trim()))
-          .filter((p) => !isNaN(p) && p > 0 && p <= totalPages);
+    setIsDone(true);
+    setIsCompleted(false);
+    setError(null);
 
-        if (pages.length === 0) {
-          alert("❌ Invalid input. Please enter valid page numbers.");
-          return;
+    try {
+      const formData = new FormData();
+      formData.append("file", files[0]);
+
+      let pagesParam = "";
+      if (mode === "extract") {
+        if (pageInput === "all") {
+          pagesParam = Array.from({ length: totalPages }, (_, i) => i + 1).join(",");
+        } else {
+          pagesParam = pageInput
+            .split(",")
+            .map((p) => parseInt(p.trim()))
+            .filter((p) => !isNaN(p) && p > 0 && p <= totalPages)
+            .join(",");
         }
-
-        alert(
-          `✅ Simulating extract: Pages [${pages.join(
-            ", "
-          )}] will be extracted.`
-        );
-      }
-    } else if (mode === "split") {
-      const validRanges = splitRanges
-        .map(({ from, to }) => ({
-          from: parseInt(from),
-          to: parseInt(to),
-        }))
-        .filter(
-          ({ from, to }) =>
-            !isNaN(from) &&
-            !isNaN(to) &&
-            from > 0 &&
-            to <= totalPages &&
-            from <= to
-        );
-
-      if (validRanges.length === 0) {
-        alert("❌ Please enter at least one valid page range.");
-        return;
+        formData.append("range", pagesParam);
+      } else if (mode === "split") {
+        pagesParam = splitRanges
+          .filter(({ from, to }) => from && to)
+          .map(({ from, to }) => `${from}-${to}`)
+          .join(",");
+        formData.append("range", pagesParam);
       }
 
-      const rangeList = validRanges
-        .map(({ from, to }) => `${from}-${to}`)
-        .join(", ");
-      alert(`✅ Simulating split: Ranges [${rangeList}] will be processed.`);
-    } else {
-      alert("❌ Please select a mode first.");
+      if (!pagesParam) {
+        throw new Error("Invalid page selection");
+      }
+
+      const response = await axios.post(
+        `https://pdfworker-khgm.onrender.com/pdf/extract-and-zip`,
+        formData,
+        {
+          responseType: "blob",
+        }
+      );
+
+      const blob = new Blob([response.data], { type: "application/zip" });
+      const url = URL.createObjectURL(blob);
+      setDownloadUrl(url);
+      setIsCompleted(true);
+    } catch (err) {
+      console.error("Error processing PDF:", err);
+      setError(err.message || "Something went wrong. Please try again.");
+      setIsCompleted(false);
     }
   };
 
@@ -233,36 +242,36 @@ function Split() {
     setSelectedPages(Array.from(new Set(allSelected)).sort((a, b) => a - b));
   };
 
-  const handlePageInputChange = (e) => {
-    const value = e.target.value;
+const handlePageInputChange = (e) => {
+  const value = e.target.value;
 
-    if (value === "all") {
-      setPageInput("all");
-      if (totalPages > 0) {
-        setSelectedPages(Array.from({ length: totalPages }, (_, i) => i + 1));
-      }
-      return;
+  if (value === "all") {
+    setPageInput("all");
+    if (totalPages > 0) {
+      setSelectedPages(Array.from({ length: totalPages }, (_, i) => i + 1));
     }
+    return;
+  }
 
-    // Clean input - remove any non-digit characters except commas
-    const cleanedValue = value.replace(/[^\d,]/g, "");
 
-    // Remove duplicate commas and leading/trailing commas
-    const normalizedValue = cleanedValue
-      .replace(/,+/g, ",")
-      .replace(/^,|,$/g, "");
+    // Allow numbers and commas only
+    const cleanedValue = value.replace(/[^0-9,]/g, "");
 
-    // Split into array of numbers and filter out invalid entries
-    const pages = normalizedValue
+    // Remove duplicate commas
+    const normalizedValue = cleanedValue.replace(/,+/g, ",");
+
+    // Remove leading/trailing commas
+    const finalValue = normalizedValue.replace(/^,|,$/g, "");
+
+    setPageInput(finalValue);
+
+    // Update selected pages
+    const pages = finalValue
       .split(",")
       .map((p) => parseInt(p.trim()))
       .filter((p) => !isNaN(p) && p > 0 && p <= totalPages);
 
-    // Update selected pages
     setSelectedPages(pages);
-
-    // Update input value (show only valid numbers)
-    setPageInput(pages.join(","));
   };
 
   const location = useLocation();
@@ -279,6 +288,26 @@ function Split() {
     matchedData?.color?.startsWith("bg-[") && matchedData.color.includes("#")
       ? matchedData.color.slice(4, -1)
       : "#DBEAFE";
+
+  if (isDone) {
+    return (
+      <Done
+        action={mode === "extract" ? "Extract" : "Split"}
+        downloadUrl={downloadUrl}
+        onDownload={() => {
+          const link = document.createElement("a");
+          link.href = downloadUrl;
+          link.download = `${mode === "extract" ? "extracted-pages" : "split-pages"}.zip`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }}
+        isCompleted={isCompleted}
+        error={error}
+        onRetry={() => setIsDone(false)}
+      />
+    );
+  }
 
   return (
     <FileGetter onFileSelect={handleFileSelect}>
