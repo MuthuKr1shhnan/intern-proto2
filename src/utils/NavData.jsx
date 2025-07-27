@@ -1,7 +1,7 @@
 import mergeSvg from '../assets/merge.svg';
 import splitSvg from '../assets/split.svg';
 import compressSvg from '../assets/compress.svg';
-import pdftowordSvg from '../assets/pdftoword.svg';
+
 import pdftoexcelSvg from '../assets/pdftoexcel.svg';
 import pdftopowerpointSvg from '../assets/pdftopowerpoint.svg';
 import wordtopdfSvg from '../assets/wordtopdf.svg';
@@ -30,38 +30,33 @@ const allTools = {
       label: "Compress PDF",
       to: "/compress-pdf",
     },
+  
     {
       id: 4,
-      img: <img src={pdftowordSvg} alt="Extract Pages" className="nav-icon" width={24} height={24} />,
-      label: "Pdf to Word",
-      to: "/pdf-to-word",
-    },
-    {
-      id: 5,
       img: <img src={pdftoexcelSvg} alt="Organize PDF" className="nav-icon" width={24} height={24} />,
       label: "Pdf to Excel",
       to: "/pdf-to-excel",
     },
     {
-      id: 6,
+      id: 5,
       img: <img src={pdftopowerpointSvg } alt="Scan to PDF" className="nav-icon" width={24} height={24} />,
       label: "PDF to Powerpoint",
       to: "/pdf-to-powerpoint",
     },
     {
-      id: 7,
+      id: 6,
       img: <img src={wordtopdfSvg } alt="Scan to PDF" className="nav-icon" width={24} height={24} />,
       label: "Word to PDF",
       to: "/word-to-pdf",
     },
     {
-      id: 8,
+      id: 7,
       img: <img src={powerpointtopdfSvg } alt="Scan to PDF" className="nav-icon" width={24} height={24} />,
       label: "Powerpoint to PDF",
       to: "/powerpoint-to-pdf",
     },
     {
-      id: 9,
+      id: 8,
       img: <img src={exceltopdfSvg} alt="Scan to PDF" className="nav-icon" width={24} height={24} />,
       label: "Excel to PDF",
       to: "/excel-to-pdf",

@@ -1,7 +1,7 @@
 import mergeSvg from '../assets/merge.svg';
 import splitSvg from '../assets/split.svg';
 import compressSvg from '../assets/compress.svg';
-import pdftowordSvg from '../assets/pdftoword.svg';
+
 import pdftoexcelSvg from '../assets/pdftoexcel.svg';
 import pdftopowerpointSvg from '../assets/pdftopowerpoint.svg';
 import wordtopdfSvg from '../assets/wordtopdf.svg';
@@ -36,17 +36,9 @@ export const tools = [
     link: "/compress-pdf",
     color: "bg-[#F1ED44]",
   },
+
   {
     id: 4,
-    title: "PDF to Word",
-    description: "Transform PDF file into editable word document",
-    icon: pdftowordSvg,
-    cornerImage: pdftowordSvg,
-    link: "/pdf-to-word",
-    color: "bg-[#C968E1]",
-  },
-  {
-    id: 5,
     title: "PDF to Excel",
     description: "Transform PDF file into editable excel file",
     icon: pdftoexcelSvg,
@@ -55,7 +47,7 @@ export const tools = [
     color: "bg-[#FEBCAF]",
   },
   {
-    id: 6,
+    id: 5,
     title: "PDF to Powerpoint",
     description: "Transform PDF file into editable PPT file",
     icon: pdftopowerpointSvg,
@@ -64,7 +56,7 @@ export const tools = [
     color: "bg-[#C2F496]",
   },
   {
-    id: 7,
+    id: 6,
     title: "Word to PDF",
     description: "Transform word document to PDF file",
     icon: wordtopdfSvg,
@@ -73,7 +65,7 @@ export const tools = [
     color: "bg-[#8AD3D8]",
   },
   {
-    id: 8,
+    id: 7,
     title: "Powerpoint to PDF",
     description: "Transform PPT file to PDF file",
     icon: powerpointtopdfSvg,
@@ -82,7 +74,7 @@ export const tools = [
     color: "bg-[#D6E7FF]",
   },
   {
-    id: 9,
+    id: 8,
     title: "Excel to PDF",
     description: "Transform excel document to PDF",
     icon: exceltopdfSvg,
@@ -91,7 +83,7 @@ export const tools = [
     color: "bg-[#F6F17F]",
   },
   {
-    id: 10,
+    id: 9,
     title: "More tools coming soon",
     description: "",
     icon: false,
