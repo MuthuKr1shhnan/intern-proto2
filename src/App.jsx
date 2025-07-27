@@ -5,7 +5,7 @@ import Nav from "./components/Nav";
 import Home from "./pages/Home";
 import Split from "./pages/converstions/Split";
 import Compress from "./pages/converstions/Compress";
-import PdfToWord from "./pages/converstions/PdfToWord";
+
 import PdfToExcel from "./pages/converstions/PdfToExcel";
 import PdfToPowerpoint from "./pages/converstions/PdfToPowerpoint";
 import WordToPdf from "./pages/converstions/WordToPdf";
@@ -21,7 +21,7 @@ function App() {
         <Route path='/merge-pdf' element={<Merge />} />
         <Route path='/split-pdf' element={<Split />} />
         <Route path='/compress-pdf' element={<Compress />} />
-        <Route path='/pdf-to-word' element={<PdfToWord />} />
+
         <Route path='/pdf-to-excel' element={<PdfToExcel />} />
         <Route path='/pdf-to-powerpoint' element={<PdfToPowerpoint />} />
         <Route path='/word-to-pdf' element={<WordToPdf />} />
