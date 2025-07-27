@@ -13,6 +13,7 @@ import Done from "../../components/Done"; // Success screen component
 import { tools } from "../../utils/cardData"; // Tool metadata
 import addbtn from "../../assets/addbtn.svg"; // Add button icon
 import revealbtnSvg from "../../assets/arrowbtn.svg"; // Sidebar toggle icon
+import Error from "../../components/Error";
 
 function Merge() {
   // 🧠 STATE VARIABLES 🧠
@@ -20,7 +21,8 @@ function Merge() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Controls sidebar visibility
   const [mergedFileUrl, setMergedFileUrl] = useState(null); // Stores merged PDF URL
   const [isDone, setIsDone] = useState(false); // Tracks if merge is complete
-  const [isCompleted, setIsCompleted] = useState(false); // Tracks if merge succeeded
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [error, setError] = useState(null); // Tracks if merge succeeded
 
   // 🔗 REFS AND HOOKS 🔗
   const fileInputRef = useRef(null); // Reference to hidden file input
@@ -62,7 +64,7 @@ function Merge() {
 
     try {
       setIsDone(true); // Show we're starting the merge
-      
+
       // Prepare form data with all files
       const formData = new FormData();
       files.forEach((item) => {
@@ -87,7 +89,51 @@ function Merge() {
       setIsCompleted(true);
     } catch (error) {
       console.error("Merge failed:", error);
-      alert("Something went wrong while merging. Try again.");
+      let errorMessage = "Failed to compress PDF. Please try again.";
+      let errorCode = 500; // Default error code
+
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        errorCode = error.response.status;
+
+        switch (errorCode) {
+          case 400:
+            errorMessage =
+              "Invalid request. Please check your file and try again.";
+            break;
+          case 401:
+            errorMessage =
+              "Authentication required. Please login and try again.";
+            break;
+          case 403:
+            errorMessage = "You don't have permission to perform this action.";
+            break;
+          case 404:
+            errorMessage = "The compression service is currently unavailable.";
+            break;
+          case 413:
+            errorMessage = "File too large. Please choose a smaller file.";
+            break;
+          case 500:
+            errorMessage = "Server error. Please try again later.";
+            break;
+          case 503:
+            errorMessage =
+              "Service temporarily unavailable. Please try again later.";
+            break;
+          default:
+            errorMessage = `Error ${errorCode}: Failed to compress PDF.`;
+        }
+      } else if (error.request) {
+        // The request was made but no response was received
+        errorMessage = "Network error. Please check your connection.";
+        errorCode = 0; // No response code
+      }
+
+      setError({
+        message: errorMessage,
+        code: errorCode,
+      });
     }
   };
 
@@ -107,8 +153,16 @@ function Merge() {
       ? matchedData.color.slice(4, -1)
       : "#DBEAFE"; // Default color
 
-  // 🎉 DONE SCREEN 🎉
-  if (isDone) {
+  // 🎉 DONE SCREEN 🎉 And Error Screen
+  if (error) {
+    return (
+      <Error
+        message={error.message}
+        code={error.code}
+        onClose={() => setError(null)}
+      />
+    );
+  } else if (isDone) {
     return (
       <Done
         action='Merge' // Action name for Done screen
@@ -130,7 +184,10 @@ function Merge() {
   // 🖥️ MAIN UI 🖥️
   return (
     <FileGetter onFileSelect={handleFileSelect}>
-      <section className="overflow-y-hidden" style={{ height: "calc(100vh - 60px)" }}>
+      <section
+        className='overflow-y-hidden'
+        style={{ height: "calc(100vh - 60px)" }}
+      >
         {/* Only show preview area if files exist */}
         {files.length > 0 && (
           <div
@@ -199,7 +256,7 @@ function Merge() {
                   >
                     <img src={addbtn} alt='Add PDF' className='w-10 h-10' />
                   </button>
-                  
+
                   {/* Hidden File Input */}
                   <input
                     ref={fileInputRef}
@@ -245,7 +302,7 @@ function Merge() {
                     </p>
                   </div>
                 </div>
-                
+
                 {/* Desktop Merge Button */}
                 <button
                   onClick={handleMerge}

@@ -7,6 +7,7 @@ import PdfPreviewCanvas from "../../components/PdfPreviewCanvas";
 import revealbtnSvg from "../../assets/arrowbtn.svg";
 import axios from "axios";
 import Done from "../../components/Done";
+import Error from "../../components/Error";
 
 function Split() {
   const [files, setFiles] = useState([]);
@@ -21,7 +22,8 @@ function Split() {
   const [isCompleted, setIsCompleted] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState(null);
   const [error, setError] = useState(null);
-  const base_URL = import.meta.env.VITE_BASE_URL; 
+  const base_URL = import.meta.env.VITE_BASE_URL;
+
   const handleFileSelect = (selected) => {
     setFiles(selected);
     setSelectedPages([]);
@@ -155,7 +157,9 @@ function Split() {
       let pagesParam = "";
       if (mode === "extract") {
         if (pageInput === "all") {
-          pagesParam = Array.from({ length: totalPages }, (_, i) => i + 1).join(",");
+          pagesParam = Array.from({ length: totalPages }, (_, i) => i + 1).join(
+            ","
+          );
         } else {
           pagesParam = pageInput
             .split(",")
@@ -190,7 +194,51 @@ function Split() {
       setIsCompleted(true);
     } catch (err) {
       console.error("Error processing PDF:", err);
-      setError(err.message || "Something went wrong. Please try again.");
+      let errorMessage = "Failed to compress PDF. Please try again.";
+      let errorCode = 500; // Default error code
+
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        errorCode = error.response.status;
+
+        switch (errorCode) {
+          case 400:
+            errorMessage =
+              "Invalid request. Please check your file and try again.";
+            break;
+          case 401:
+            errorMessage =
+              "Authentication required. Please login and try again.";
+            break;
+          case 403:
+            errorMessage = "You don't have permission to perform this action.";
+            break;
+          case 404:
+            errorMessage = "The compression service is currently unavailable.";
+            break;
+          case 413:
+            errorMessage = "File too large. Please choose a smaller file.";
+            break;
+          case 500:
+            errorMessage = "Server error. Please try again later.";
+            break;
+          case 503:
+            errorMessage =
+              "Service temporarily unavailable. Please try again later.";
+            break;
+          default:
+            errorMessage = `Error ${errorCode}: Failed to compress PDF.`;
+        }
+      } else if (error.request) {
+        // The request was made but no response was received
+        errorMessage = "Network error. Please check your connection.";
+        errorCode = 0; // No response code
+      }
+
+      setError({
+        message: errorMessage,
+        code: errorCode,
+      });
       setIsCompleted(false);
     }
   };
@@ -242,17 +290,16 @@ function Split() {
     setSelectedPages(Array.from(new Set(allSelected)).sort((a, b) => a - b));
   };
 
-const handlePageInputChange = (e) => {
-  const value = e.target.value;
+  const handlePageInputChange = (e) => {
+    const value = e.target.value;
 
-  if (value === "all") {
-    setPageInput("all");
-    if (totalPages > 0) {
-      setSelectedPages(Array.from({ length: totalPages }, (_, i) => i + 1));
+    if (value === "all") {
+      setPageInput("all");
+      if (totalPages > 0) {
+        setSelectedPages(Array.from({ length: totalPages }, (_, i) => i + 1));
+      }
+      return;
     }
-    return;
-  }
-
 
     // Allow numbers and commas only
     const cleanedValue = value.replace(/[^0-9,]/g, "");
@@ -288,8 +335,15 @@ const handlePageInputChange = (e) => {
     matchedData?.color?.startsWith("bg-[") && matchedData.color.includes("#")
       ? matchedData.color.slice(4, -1)
       : "#DBEAFE";
-
-  if (isDone) {
+  if (error) {
+    return (
+      <Error
+        message={error.message}
+        code={error.code}
+        onClose={() => setError(null)}
+      />
+    );
+  } else if (isDone) {
     return (
       <Done
         action={mode === "extract" ? "Extract" : "Split"}
@@ -297,7 +351,9 @@ const handlePageInputChange = (e) => {
         onDownload={() => {
           const link = document.createElement("a");
           link.href = downloadUrl;
-          link.download = `${mode === "extract" ? "extracted-pages" : "split-pages"}.zip`;
+          link.download = `${
+            mode === "extract" ? "extracted-pages" : "split-pages"
+          }.zip`;
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
@@ -311,7 +367,10 @@ const handlePageInputChange = (e) => {
 
   return (
     <FileGetter onFileSelect={handleFileSelect}>
-      <section className="overflow-y-hidden" style={{ height: "calc(100vh - 60px)" }}>
+      <section
+        className='overflow-y-hidden'
+        style={{ height: "calc(100vh - 60px)" }}
+      >
         {files.length > 0 && (
           <div
             className='relative flex flex-col md:flex-row overflow-y-auto overflow-x-hidden'
@@ -359,7 +418,6 @@ const handlePageInputChange = (e) => {
                   </div>
                 ))}
               </div>
-             
             </div>
             {/* Right Sidebar */}
             <div
@@ -552,13 +610,13 @@ const handlePageInputChange = (e) => {
             </div>
           </div>
         )}
-         {/* Bottom button on mobile */}
-              <button
-                onClick={handleSplit}
-                className='sticky block md:hidden mx-auto bottom-2 bg-[#2869DA] text-white py-3 z-1 rounded-md w-[188px] hover:bg-blue-700 shadow mt-auto'
-              >
-                {mode.slice(0, 1).toUpperCase() + mode.slice(1) + " PDF"}
-              </button>
+        {/* Bottom button on mobile */}
+        <button
+          onClick={handleSplit}
+          className='sticky block md:hidden mx-auto bottom-2 bg-[#2869DA] text-white py-3 z-1 rounded-md w-[188px] hover:bg-blue-700 shadow mt-auto'
+        >
+          {mode.slice(0, 1).toUpperCase() + mode.slice(1) + " PDF"}
+        </button>
       </section>
     </FileGetter>
   );

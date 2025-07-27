@@ -7,6 +7,7 @@ import axios from "axios"; // Helps us talk to servers (like sending files)
 // These are like pre-built pieces of our app we can reuse
 import FileGetter from "../../components/FileGetter"; // Handles file selection
 import Done from "../../components/Done"; // Shows the "done" screen after conversion
+import Error from "../../components/Error";
 
 function ExcelToPdf() {
   // 🧠 MEMORY BOXES (STATE VARIABLES) 🧠
@@ -14,7 +15,7 @@ function ExcelToPdf() {
   const [convertedFileUrl, setConvertedFileUrl] = useState(null); // Where we'll store the PDF download link
   const [isDone, setIsDone] = useState(false); // Tracks if conversion is complete
   const [isCompleted, setIsCompleted] = useState(false); // Tracks if conversion was successful
-
+  const [error, setError] = useState(null);
   // 📂 HANDLE FILE SELECTION 📂
   // This runs when user picks an Excel file
   const handleFileSelect = async (selected) => {
@@ -22,15 +23,15 @@ function ExcelToPdf() {
     if (!selected || selected.length === 0) return;
 
     // We only work with the first file (since multipleFiles is false)
-    const file = selected[0]; 
-    
+    const file = selected[0];
+
     // Get our server's address from environment variables
     const base_URL = import.meta.env.VITE_BASE_URL;
-    
+
     try {
       // Show that we're starting the conversion
       setIsDone(true);
-      
+
       // Prepare the file for sending to the server
       const formData = new FormData();
       formData.append("file", file); // Attach the file with the key "file"
@@ -56,13 +57,65 @@ function ExcelToPdf() {
     } catch (error) {
       // 😢 OH NO, SOMETHING WENT WRONG 😢
       console.error("Excel to PDF conversion failed:", error);
-      alert("Conversion failed. Please try again.");
+      let errorMessage = "Failed to compress PDF. Please try again.";
+      let errorCode = 500; // Default error code
+
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        errorCode = error.response.status;
+
+        switch (errorCode) {
+          case 400:
+            errorMessage =
+              "Invalid request. Please check your file and try again.";
+            break;
+          case 401:
+            errorMessage =
+              "Authentication required. Please login and try again.";
+            break;
+          case 403:
+            errorMessage = "You don't have permission to perform this action.";
+            break;
+          case 404:
+            errorMessage = "The compression service is currently unavailable.";
+            break;
+          case 413:
+            errorMessage = "File too large. Please choose a smaller file.";
+            break;
+          case 500:
+            errorMessage = "Server error. Please try again later.";
+            break;
+          case 503:
+            errorMessage =
+              "Service temporarily unavailable. Please try again later.";
+            break;
+          default:
+            errorMessage = `Error ${errorCode}: Failed to compress PDF.`;
+        }
+      } else if (error.request) {
+        // The request was made but no response was received
+        errorMessage = "Network error. Please check your connection.";
+        errorCode = 0; // No response code
+      }
+
+      setError({
+        message: errorMessage,
+        code: errorCode,
+      });
     }
   };
 
-  // 🏁 DONE SCREEN 🏁
+  // 🏁 DONE SCREEN & Error Screen🏁
   // If conversion is done, show the Done component
-  if (isDone) {
+  if (error) {
+    return (
+      <Error
+        message={error.message}
+        code={error.code}
+        onClose={() => setError(null)}
+      />
+    );
+  } else if (isDone) {
     return (
       <Done
         action='Excel to PDF' // Tell the Done component what we were doing

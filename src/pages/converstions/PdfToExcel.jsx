@@ -6,12 +6,13 @@ import FileGetter from "../../components/FileGetter";
 import PdfPreviewCanvas from "../../components/PdfPreviewCanvas";
 import Done from "../../components/Done";
 import { tools } from "../../utils/cardData";
-
+import Error from "../../components/Error";
 function PdfToExcel() {
   const [files, setFiles] = useState([]);
   const [convertedFileUrl, setConvertedFileUrl] = useState(null);
   const [isDone, setIsDone] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [error, setError] = useState(null);
 
   const location = useLocation();
   const base_URL = import.meta.env.VITE_BASE_URL;
@@ -44,15 +45,58 @@ function PdfToExcel() {
       );
 
       const blob = new Blob([response.data], {
-        type:
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
       const url = URL.createObjectURL(blob);
       setConvertedFileUrl(url);
       setIsCompleted(true);
     } catch (error) {
       console.error("PDF to Excel failed:", error);
-      alert("Something went wrong while converting. Try again.");
+      let errorMessage = "Failed to compress PDF. Please try again.";
+      let errorCode = 500; // Default error code
+
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        errorCode = error.response.status;
+
+        switch (errorCode) {
+          case 400:
+            errorMessage =
+              "Invalid request. Please check your file and try again.";
+            break;
+          case 401:
+            errorMessage =
+              "Authentication required. Please login and try again.";
+            break;
+          case 403:
+            errorMessage = "You don't have permission to perform this action.";
+            break;
+          case 404:
+            errorMessage = "The compression service is currently unavailable.";
+            break;
+          case 413:
+            errorMessage = "File too large. Please choose a smaller file.";
+            break;
+          case 500:
+            errorMessage = "Server error. Please try again later.";
+            break;
+          case 503:
+            errorMessage =
+              "Service temporarily unavailable. Please try again later.";
+            break;
+          default:
+            errorMessage = `Error ${errorCode}: Failed to compress PDF.`;
+        }
+      } else if (error.request) {
+        // The request was made but no response was received
+        errorMessage = "Network error. Please check your connection.";
+        errorCode = 0; // No response code
+      }
+
+      setError({
+        message: errorMessage,
+        code: errorCode,
+      });
     }
   };
 
@@ -69,7 +113,16 @@ function PdfToExcel() {
       ? matchedData.color.slice(4, -1)
       : "#DBEAFE";
 
-  if (isDone) {
+  //Error and Done Screen
+  if (error) {
+    return (
+      <Error
+        message={error.message}
+        code={error.code}
+        onClose={() => setError(null)}
+      />
+    );
+  } else if (isDone) {
     return (
       <Done
         action='PDF to Excel'

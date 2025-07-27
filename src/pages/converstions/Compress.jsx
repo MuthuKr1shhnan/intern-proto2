@@ -6,6 +6,7 @@ import PdfPreviewCanvas from "../../components/PdfPreviewCanvas";
 import revealbtnSvg from "../../assets/arrowbtn.svg";
 import Done from "../../components/Done";
 import axios from "axios";
+import Error from "../../components/Error";
 
 function Compress() {
   // 📌 STATE VARIABLES 📌
@@ -18,6 +19,7 @@ function Compress() {
   const [isDone, setIsDone] = useState(false); // Tracks if compression is done
   const [isCompleted, setIsCompleted] = useState(false); // Tracks if compression completed successfully
   const base_URL = import.meta.env.VITE_BASE_URL; // Our server's base URL from environment variables
+  const [error, setError] = useState(null);
 
   // 🖼️ HANDLE FILE SELECTION 🖼️
   // This function runs when user selects files
@@ -61,7 +63,51 @@ function Compress() {
       setCompressedFileUrl(url); // Store this URL
     } catch (error) {
       console.error("Compression failed:", error);
-      alert("Failed to compress PDF. Please try again.");
+      let errorMessage = "Failed to compress PDF. Please try again.";
+      let errorCode = 500; // Default error code
+
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        errorCode = error.response.status;
+
+        switch (errorCode) {
+          case 400:
+            errorMessage =
+              "Invalid request. Please check your file and try again.";
+            break;
+          case 401:
+            errorMessage =
+              "Authentication required. Please login and try again.";
+            break;
+          case 403:
+            errorMessage = "You don't have permission to perform this action.";
+            break;
+          case 404:
+            errorMessage = "The compression service is currently unavailable.";
+            break;
+          case 413:
+            errorMessage = "File too large. Please choose a smaller file.";
+            break;
+          case 500:
+            errorMessage = "Server error. Please try again later.";
+            break;
+          case 503:
+            errorMessage =
+              "Service temporarily unavailable. Please try again later.";
+            break;
+          default:
+            errorMessage = `Error ${errorCode}: Failed to compress PDF.`;
+        }
+      } else if (error.request) {
+        // The request was made but no response was received
+        errorMessage = "Network error. Please check your connection.";
+        errorCode = 0; // No response code
+      }
+
+      setError({
+        message: errorMessage,
+        code: errorCode,
+      });
     }
   };
 
@@ -84,19 +130,26 @@ function Compress() {
 
   // 🎉 DONE SCREEN 🎉
   // If compression is done, show the Done component instead of the main UI
-  if (isDone) {
+  if (error) {
+    return (
+      <Error
+        message={error.message}
+        code={error.code}
+        onClose={() => setError(null)}
+      />
+    );
+  } else if (isDone) {
     return (
       <Done
         action='Compress'
         downloadUrl={compressedFileUrl}
         onDownload={() => {
-          // Create a hidden link and click it to trigger download
           const link = document.createElement("a");
           link.href = compressedFileUrl;
-          link.download = `compressed(${mode}).pdf`; // Set filename with compression mode
+          link.download = `compressed(${mode}).pdf`;
           document.body.appendChild(link);
-          link.click(); // Programmatically click the link
-          document.body.removeChild(link); // Clean up
+          link.click();
+          document.body.removeChild(link);
         }}
         isCompleted={isCompleted}
       />
@@ -108,7 +161,10 @@ function Compress() {
     // FileGetter handles the file selection UI and passes files to our handleFileSelect
     <FileGetter onFileSelect={handleFileSelect}>
       {/* Main container with full viewport height minus header */}
-      <section className="overflow-y-hidden" style={{ height: "calc(100vh - 60px)" }}>
+      <section
+        className='overflow-y-hidden'
+        style={{ height: "calc(100vh - 60px)" }}
+      >
         {/* Only show preview area if files are selected */}
         {files.length > 0 && (
           <div
@@ -165,7 +221,7 @@ function Compress() {
                 </div>
               </div>
             </div>
-           
+
             {/* RIGHT SIDEBAR - Compression Options */}
             <div
               className={`fixed top-0 right-0 h-full bg-white z-10 md:static md:translate-x-0 transition-transform duration-300
