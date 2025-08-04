@@ -1,30 +1,34 @@
-import { useState, useEffect } from "react";
-import FileGetter from "../../components/FileGetter";
-import { useLocation } from "react-router-dom";
-import { tools } from "../../utils/cardData";
-import { getDocument } from "pdfjs-dist";
-import PdfPreviewCanvas from "../../components/PdfPreviewCanvas";
-import revealbtnSvg from "../../assets/arrowbtn.svg";
-import axios from "axios";
-import Done from "../../components/Done";
-import Error from "../../components/Error";
+// 📦 IMPORTING REQUIRED TOOLS 📦
+import { useState, useEffect } from "react"; // React hooks for state and side effects
+import FileGetter from "../../components/FileGetter"; // File upload component
+import { useLocation } from "react-router-dom"; // For getting current URL path
+import { tools } from "../../utils/cardData"; // Tool metadata
+import { getDocument } from "pdfjs-dist"; // PDF.js library for PDF processing
+import PdfPreviewCanvas from "../../components/PdfPreviewCanvas"; // PDF preview component
+import revealbtnSvg from "../../assets/arrowbtn.svg"; // Sidebar toggle icon
+import axios from "axios"; // For making HTTP requests
+import Done from "../../components/Done"; // Success screen component
+import Error from "../../components/Error"; // Error display component
 
 function Split() {
-  const [files, setFiles] = useState([]);
-  const [mode, setMode] = useState("split");
-  const [pageInput, setPageInput] = useState("");
-  const [splitRanges, setSplitRanges] = useState([{ from: "", to: "" }]);
-  const [totalPages, setTotalPages] = useState(0);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [selectedPages, setSelectedPages] = useState([]);
-  const [activeRangeIndex, setActiveRangeIndex] = useState(0);
-  const [isDone, setIsDone] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(false);
-  const [downloadUrl, setDownloadUrl] = useState(null);
-  const [error, setError] = useState(null);
-  const base_URL = import.meta.env.VITE_BASE_URL;
+  // 🧠 STATE VARIABLES 🧠
+  const [files, setFiles] = useState([]); // Stores uploaded PDF files
+  const [mode, setMode] = useState("split"); // Current mode: "split" or "extract"
+  const [pageInput, setPageInput] = useState(""); // User input for pages to extract
+  const [splitRanges, setSplitRanges] = useState([{ from: "", to: "" }]); // Page ranges for splitting
+  const [totalPages, setTotalPages] = useState(0); // Total pages in the PDF
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Controls sidebar visibility
+  const [selectedPages, setSelectedPages] = useState([]); // Currently selected pages
+  const [activeRangeIndex, setActiveRangeIndex] = useState(0); // Active range being edited
+  const [isDone, setIsDone] = useState(false); // Tracks if operation is complete
+  const [isCompleted, setIsCompleted] = useState(false); // Tracks if operation succeeded
+  const [downloadUrl, setDownloadUrl] = useState(null); // Download URL for result
+  const [error, setError] = useState(null); // Stores error information
+  const base_URL = import.meta.env.VITE_BASE_URL; // API base URL from env
 
+  // 📁 FILE HANDLING FUNCTIONS 📁
   const handleFileSelect = (selected) => {
+    // Reset all state when new file is selected
     setFiles(selected);
     setSelectedPages([]);
     setSplitRanges([{ from: "", to: "" }]);
@@ -33,35 +37,49 @@ function Split() {
   };
 
   const handleExtractAll = () => {
+    // Select all pages for extraction
     setPageInput("all");
     if (totalPages > 0) {
       setSelectedPages(Array.from({ length: totalPages }, (_, i) => i + 1));
     }
   };
 
+  // 🔄 EFFECT TO LOAD PDF PAGES WHEN FILE CHANGES 🔄
   useEffect(() => {
     const loadPages = async () => {
       if (!files[0] || files[0].type !== "application/pdf") return;
-      const arrayBuffer = await files[0].arrayBuffer();
-      const pdf = await getDocument({ data: arrayBuffer }).promise;
-      setTotalPages(pdf.numPages);
-      setSelectedPages([]);
-      setSplitRanges([{ from: "", to: "" }]);
-      setActiveRangeIndex(0);
-      setPageInput("");
+      
+      try {
+        // Convert file to ArrayBuffer
+        const arrayBuffer = await files[0].arrayBuffer();
+        // Load PDF document
+        const pdf = await getDocument({ data: arrayBuffer }).promise;
+        // Update total pages and reset selections
+        setTotalPages(pdf.numPages);
+        setSelectedPages([]);
+        setSplitRanges([{ from: "", to: "" }]);
+        setActiveRangeIndex(0);
+        setPageInput("");
+      } catch (err) {
+        console.error("Error loading PDF:", err);
+        setError({ message: "Failed to load PDF", code: 400 });
+      }
     };
     loadPages();
   }, [files]);
 
+  // 🖱️ HANDLE PAGE CLICK (FOR SELECTION) 🖱️
   const handlePageClick = (pageNumber) => {
     if (mode === "extract") {
+      // Toggle page selection for extract mode
       setSelectedPages((prev) => {
         const newSelection = prev.includes(pageNumber)
-          ? prev.filter((p) => p !== pageNumber)
-          : [...prev, pageNumber];
-        return newSelection.sort((a, b) => a - b);
+          ? prev.filter((p) => p !== pageNumber) // Remove if already selected
+          : [...prev, pageNumber]; // Add if not selected
+        return newSelection.sort((a, b) => a - b); // Keep sorted
       });
 
+      // Update page input text
       setPageInput((prev) => {
         const currentPages =
           prev === "all"
@@ -78,14 +96,17 @@ function Split() {
         return newPages.sort((a, b) => a - b).join(",");
       });
     } else if (mode === "split") {
+      // Handle range selection for split mode
       const currentRange = splitRanges[activeRangeIndex];
       let newFrom = currentRange.from;
       let newTo = currentRange.to;
 
       if (!newFrom || !newTo) {
+        // If range is empty, set both to clicked page
         newFrom = pageNumber.toString();
         newTo = pageNumber.toString();
       } else {
+        // Adjust range based on clicked page
         const fromNum = parseInt(newFrom);
         const toNum = parseInt(newTo);
 
@@ -94,6 +115,7 @@ function Split() {
         } else if (pageNumber > toNum) {
           newTo = pageNumber.toString();
         } else {
+          // Clicked inside range - adjust nearest boundary
           const fromDist = Math.abs(pageNumber - fromNum);
           const toDist = Math.abs(pageNumber - toNum);
 
@@ -105,10 +127,12 @@ function Split() {
         }
       }
 
+      // Update the range
       const updatedRanges = [...splitRanges];
       updatedRanges[activeRangeIndex] = { from: newFrom, to: newTo };
       setSplitRanges(updatedRanges);
 
+      // Update selected pages visualization
       if (newFrom && newTo) {
         const from = parseInt(newFrom);
         const to = parseInt(newTo);
@@ -118,6 +142,7 @@ function Split() {
             rangePages.push(i);
           }
 
+          // Combine all ranges into selected pages
           const allSelected = splitRanges
             .filter((_, idx) => idx !== activeRangeIndex)
             .flatMap((range) => {
@@ -140,6 +165,7 @@ function Split() {
     }
   };
 
+  // ✂️ HANDLE SPLIT/EXTRACT OPERATION ✂️
   const handleSplit = async () => {
     if (!files[0]) {
       setError("Please upload a PDF first.");
@@ -157,10 +183,12 @@ function Split() {
       let pagesParam = "";
       if (mode === "extract") {
         if (pageInput === "all") {
+          // Select all pages
           pagesParam = Array.from({ length: totalPages }, (_, i) => i + 1).join(
             ","
           );
         } else {
+          // Use user-provided pages
           pagesParam = pageInput
             .split(",")
             .map((p) => parseInt(p.trim()))
@@ -169,6 +197,7 @@ function Split() {
         }
         formData.append("range", pagesParam);
       } else if (mode === "split") {
+        // Convert ranges to server format (e.g., "1-3,5-7")
         pagesParam = splitRanges
           .filter(({ from, to }) => from && to)
           .map(({ from, to }) => `${from}-${to}`)
@@ -180,41 +209,40 @@ function Split() {
         throw new Error("Invalid page selection");
       }
 
+      // 🚀 SEND TO SERVER 🚀
       const response = await axios.post(
         `${base_URL}pdf/extract-and-zip`,
         formData,
         {
-          responseType: "blob",
+          responseType: "blob", // Expect ZIP file in response
         }
       );
 
+      // 💾 CREATE DOWNLOADABLE FILE 💾
       const blob = new Blob([response.data], { type: "application/zip" });
       const url = URL.createObjectURL(blob);
       setDownloadUrl(url);
       setIsCompleted(true);
     } catch (err) {
       console.error("Error processing PDF:", err);
-      let errorMessage = "Failed to compress PDF. Please try again.";
+      let errorMessage = "Failed to process PDF. Please try again.";
       let errorCode = 500; // Default error code
 
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        errorCode = error.response.status;
-
+      // Handle different error scenarios
+      if (err.response) {
+        errorCode = err.response.status;
         switch (errorCode) {
           case 400:
-            errorMessage =
-              "Invalid request. Please check your file and try again.";
+            errorMessage = "Invalid request. Please check your file and try again.";
             break;
           case 401:
-            errorMessage =
-              "Authentication required. Please login and try again.";
+            errorMessage = "Authentication required. Please login and try again.";
             break;
           case 403:
             errorMessage = "You don't have permission to perform this action.";
             break;
           case 404:
-            errorMessage = "The compression service is currently unavailable.";
+            errorMessage = "The service is currently unavailable.";
             break;
           case 413:
             errorMessage = "File too large. Please choose a smaller file.";
@@ -223,16 +251,14 @@ function Split() {
             errorMessage = "Server error. Please try again later.";
             break;
           case 503:
-            errorMessage =
-              "Service temporarily unavailable. Please try again later.";
+            errorMessage = "Service temporarily unavailable. Please try again later.";
             break;
           default:
-            errorMessage = `Error ${errorCode}: Failed to compress PDF.`;
+            errorMessage = `Error ${errorCode}: Failed to process PDF.`;
         }
-      } else if (error.request) {
-        // The request was made but no response was received
+      } else if (err.request) {
         errorMessage = "Network error. Please check your connection.";
-        errorCode = 0; // No response code
+        errorCode = 0;
       }
 
       setError({
@@ -243,13 +269,16 @@ function Split() {
     }
   };
 
+  // 🔢 RANGE INPUT HANDLERS 🔢
   const handleRangeChange = (index, key, value) => {
+    // Only allow numbers or empty string
     if (value === "" || /^[0-9\b]+$/.test(value)) {
       const updated = [...splitRanges];
       updated[index][key] = value;
       setSplitRanges(updated);
       setActiveRangeIndex(index);
 
+      // Update selected pages visualization
       const allSelected = updated.flatMap((range) => {
         if (range.from && range.to) {
           const from = parseInt(range.from);
@@ -266,16 +295,20 @@ function Split() {
   };
 
   const addNewRange = () => {
+    // Add a new empty range
     setSplitRanges([...splitRanges, { from: "", to: "" }]);
     setActiveRangeIndex(splitRanges.length);
   };
 
   const removeRange = (index) => {
-    if (splitRanges.length <= 1) return;
+    if (splitRanges.length <= 1) return; // Keep at least one range
+    
+    // Remove the specified range
     const updated = splitRanges.filter((_, i) => i !== index);
     setSplitRanges(updated);
     setActiveRangeIndex(Math.min(activeRangeIndex, updated.length - 1));
 
+    // Update selected pages visualization
     const allSelected = updated.flatMap((range) => {
       if (range.from && range.to) {
         const from = parseInt(range.from);
@@ -290,6 +323,7 @@ function Split() {
     setSelectedPages(Array.from(new Set(allSelected)).sort((a, b) => a - b));
   };
 
+  // 📝 PAGE INPUT HANDLER (FOR EXTRACT MODE) 📝
   const handlePageInputChange = (e) => {
     const value = e.target.value;
 
@@ -301,14 +335,10 @@ function Split() {
       return;
     }
 
-    // Allow numbers and commas only
+    // Clean the input: only numbers and commas
     const cleanedValue = value.replace(/[^0-9,]/g, "");
-
-    // Remove duplicate commas
-    const normalizedValue = cleanedValue.replace(/,+/g, ",");
-
-    // Remove leading/trailing commas
-    const finalValue = normalizedValue.replace(/^,|,$/g, "");
+    const normalizedValue = cleanedValue.replace(/,+/g, ","); // Remove duplicate commas
+    const finalValue = normalizedValue.replace(/^,|,$/g, ""); // Remove leading/trailing commas
 
     setPageInput(finalValue);
 
@@ -321,20 +351,23 @@ function Split() {
     setSelectedPages(pages);
   };
 
+  // 🔍 GET TOOL INFO FROM URL 🔍
   const location = useLocation();
   const currentPath = location.pathname.replace("/", "");
   const matchedData = tools.find(
     (tool) => tool.link.replace("/", "") === currentPath
   );
 
+  // Set default values if no match found
   const title = matchedData?.title || "Tool";
   const subtitle = matchedData?.description || "Upload and process your files";
   const image = matchedData?.icon || "";
-
   const extractedColor =
     matchedData?.color?.startsWith("bg-[") && matchedData.color.includes("#")
       ? matchedData.color.slice(4, -1)
       : "#DBEAFE";
+
+  // 🚨 ERROR SCREEN 🚨
   if (error) {
     return (
       <Error
@@ -343,12 +376,15 @@ function Split() {
         onClose={() => setError(null)}
       />
     );
-  } else if (isDone) {
+  } 
+  // 🎉 DONE SCREEN 🎉
+  else if (isDone) {
     return (
       <Done
         action={mode === "extract" ? "Extract" : "Split"}
         downloadUrl={downloadUrl}
         onDownload={() => {
+          // Create and trigger download
           const link = document.createElement("a");
           link.href = downloadUrl;
           link.download = `${
@@ -365,22 +401,24 @@ function Split() {
     );
   }
 
+  // 🖥️ MAIN UI 🖥️
   return (
     <FileGetter onFileSelect={handleFileSelect}>
       <section
         className='overflow-y-hidden'
         style={{ height: "calc(100vh - 60px)" }}
       >
+        {/* Only show preview area if files exist */}
         {files.length > 0 && (
           <div
             className='relative flex flex-col md:flex-row overflow-y-auto overflow-x-hidden'
             style={{ height: "calc(100vh - 60px)" }}
           >
-            {/* Left Section */}
+            {/* LEFT SECTION - PDF Preview */}
             <div className='relative h-full flex-1 tool px-6 md:px-28 bg-[#f8f8f8] overflow-y-auto text-center'>
-              {/* Header */}
+              {/* Tool Header */}
               <div
-                className='sticky top-0 z-10 w-full md:w-[72%] mx-auto overflow-hidden p-[12px] pb-6 md:pl-8  rounded-[4px] h-[88px] md:h-[105px] mt-[80px] mb-6 text-start'
+                className='sticky top-0 z-10 w-full md:w-[72%] mx-auto overflow-hidden p-[12px] pb-6 md:pl-8 rounded-[4px] h-[88px] md:h-[105px] mt-[80px] mb-6 text-start'
                 style={{ backgroundColor: extractedColor }}
               >
                 <h1 className='text-[20px] md:text-[32px] font-bold text-gray-800'>
@@ -389,6 +427,7 @@ function Split() {
                 <p className='text-[12px] w-[80%] md:text-[16px] text-gray-500 mt-1'>
                   {subtitle}
                 </p>
+                {/* Tool icon in corner */}
                 {image && (
                   <img
                     src={image}
@@ -397,7 +436,8 @@ function Split() {
                   />
                 )}
               </div>
-              {/* Page Previews */}
+
+              {/* PDF Page Thumbnails */}
               <div className='flex justify-around gap-y-10 pt-2 pl-5 gap-12 pr-5 md:pl-8 md:pr-8 flex-wrap'>
                 {Array.from({ length: totalPages }).map((_, i) => (
                   <div
@@ -405,7 +445,7 @@ function Split() {
                     onClick={() => handlePageClick(i + 1)}
                     className={`m-1 w-[144px] h-[204px] flex flex-col items-center justify-center relative border border-transparent rounded-[2px] shadow-[0_0_8px_0_rgba(0,0,0,0.08)] cursor-pointer ${
                       selectedPages.includes(i + 1)
-                        ? "bg-[#E9F1FE]"
+                        ? "bg-[#E9F1FE]" // Highlight selected pages
                         : "bg-[#fdfdfd]"
                     }`}
                   >
@@ -419,14 +459,15 @@ function Split() {
                 ))}
               </div>
             </div>
-            {/* Right Sidebar */}
+
+            {/* RIGHT SIDEBAR - Controls */}
             <div
               className={`fixed top-0 right-0 h-full bg-white z-10 md:static md:translate-x-0 transition-transform duration-300 border-l border-[#E5E8EB] ${
                 isSidebarOpen ? "translate-x-0" : "translate-x-full"
               }`}
               style={{ width: "303px" }}
             >
-              {/* Reveal Btn */}
+              {/* Mobile Toggle Button */}
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                 className='w-[20px] h-14 bg-[#2869DA] rounded-[4px] md:hidden absolute -left-5 top-1/2 transform -translate-y-1/2 z-50 flex items-center justify-center'
@@ -439,8 +480,9 @@ function Split() {
                   } w-4`}
                 />
               </button>
+
               <div className='w-full h-full p-6 flex flex-col mt-20 md:mt-0 gap-3'>
-                {/* Extract Mode */}
+                {/* EXTRACT MODE SECTION */}
                 <div className='flex flex-col gap-3'>
                   <div
                     className={`pl-3 pr-3 pt-2 pb-2 ${
@@ -502,7 +544,8 @@ function Split() {
                     </div>
                   )}
                 </div>
-                {/* Split Mode */}
+
+                {/* SPLIT MODE SECTION */}
                 <div className='flex flex-col gap-3'>
                   <div
                     className={`pl-3 pr-3 pt-2 pb-2 ${
@@ -543,6 +586,7 @@ function Split() {
                   {mode === "split" && (
                     <div className='pl-3 pr-3 pt-2 pb-2 rounded-[4px]'>
                       <div className='flex flex-col gap-2'>
+                        {/* Render each range input */}
                         {splitRanges.map((range, i) => (
                           <div
                             key={i}
@@ -599,7 +643,8 @@ function Split() {
                     </div>
                   )}
                 </div>
-                {/* Desktop Split Button */}
+
+                {/* Desktop Action Button */}
                 <button
                   onClick={handleSplit}
                   className='mt-auto w-full hidden md:block bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 shadow'
@@ -610,7 +655,8 @@ function Split() {
             </div>
           </div>
         )}
-        {/* Bottom button on mobile */}
+
+        {/* Mobile Action Button */}
         <button
           onClick={handleSplit}
           className='sticky block md:hidden mx-auto bottom-2 bg-[#2869DA] text-white py-3 z-1 rounded-md w-[188px] hover:bg-blue-700 shadow mt-auto'
